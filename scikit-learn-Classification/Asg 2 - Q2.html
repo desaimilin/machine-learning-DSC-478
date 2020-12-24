@@ -1,0 +1,2976 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+
+  <div class="border-box-sizing">
+    <div class="container">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">neighbors</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">classification_report</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">confusion_matrix</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">tree</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">naive_bayes</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">bank_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;http://facweb.cs.depaul.edu/mobasher/classes/csc478/Data/bank_data.csv&quot;</span><span class="p">)</span>
+<span class="n">bank_data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>age</th>
+      <th>income</th>
+      <th>children</th>
+      <th>gender</th>
+      <th>region</th>
+      <th>married</th>
+      <th>car</th>
+      <th>savings_acct</th>
+      <th>current_acct</th>
+      <th>mortgage</th>
+      <th>pep</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>ID12101</td>
+      <td>48</td>
+      <td>17546.00</td>
+      <td>1</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ID12102</td>
+      <td>40</td>
+      <td>30085.10</td>
+      <td>3</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>ID12103</td>
+      <td>51</td>
+      <td>16575.40</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ID12104</td>
+      <td>23</td>
+      <td>20375.40</td>
+      <td>3</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ID12105</td>
+      <td>57</td>
+      <td>50576.30</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>RURAL</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>595</td>
+      <td>ID12696</td>
+      <td>61</td>
+      <td>47025.00</td>
+      <td>2</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>596</td>
+      <td>ID12697</td>
+      <td>30</td>
+      <td>9672.25</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>597</td>
+      <td>ID12698</td>
+      <td>31</td>
+      <td>15976.30</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>598</td>
+      <td>ID12699</td>
+      <td>29</td>
+      <td>14711.80</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>599</td>
+      <td>ID12700</td>
+      <td>38</td>
+      <td>26671.60</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+    </tr>
+  </tbody>
+</table>
+<p>600 rows &#215; 12 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">bank_data</span><span class="p">[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bank_data</span><span class="p">[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bank_data</span><span class="p">[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">bank_data</span><span class="p">[</span><span class="s1">&#39;income&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="n">bank_data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>age</th>
+      <th>income</th>
+      <th>children</th>
+      <th>gender</th>
+      <th>region</th>
+      <th>married</th>
+      <th>car</th>
+      <th>savings_acct</th>
+      <th>current_acct</th>
+      <th>mortgage</th>
+      <th>pep</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>ID12101</td>
+      <td>48</td>
+      <td>-0.773523</td>
+      <td>1</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ID12102</td>
+      <td>40</td>
+      <td>0.198541</td>
+      <td>3</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>ID12103</td>
+      <td>51</td>
+      <td>-0.848766</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ID12104</td>
+      <td>23</td>
+      <td>-0.554180</td>
+      <td>3</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ID12105</td>
+      <td>57</td>
+      <td>1.787071</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>RURAL</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>595</td>
+      <td>ID12696</td>
+      <td>61</td>
+      <td>1.511765</td>
+      <td>2</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>596</td>
+      <td>ID12697</td>
+      <td>30</td>
+      <td>-1.383916</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>597</td>
+      <td>ID12698</td>
+      <td>31</td>
+      <td>-0.895210</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>598</td>
+      <td>ID12699</td>
+      <td>29</td>
+      <td>-0.993237</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>599</td>
+      <td>ID12700</td>
+      <td>38</td>
+      <td>-0.066083</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+    </tr>
+  </tbody>
+</table>
+<p>600 rows &#215; 12 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">bank_data</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bank_data</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">bank_data</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">bank_data</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="n">bank_data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>id</th>
+      <th>age</th>
+      <th>income</th>
+      <th>children</th>
+      <th>gender</th>
+      <th>region</th>
+      <th>married</th>
+      <th>car</th>
+      <th>savings_acct</th>
+      <th>current_acct</th>
+      <th>mortgage</th>
+      <th>pep</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>ID12101</td>
+      <td>0.388563</td>
+      <td>-0.773523</td>
+      <td>1</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>ID12102</td>
+      <td>-0.166032</td>
+      <td>0.198541</td>
+      <td>3</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>ID12103</td>
+      <td>0.596536</td>
+      <td>-0.848766</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>ID12104</td>
+      <td>-1.344546</td>
+      <td>-0.554180</td>
+      <td>3</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ID12105</td>
+      <td>1.012482</td>
+      <td>1.787071</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>RURAL</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>595</td>
+      <td>ID12696</td>
+      <td>1.289779</td>
+      <td>1.511765</td>
+      <td>2</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>596</td>
+      <td>ID12697</td>
+      <td>-0.859275</td>
+      <td>-1.383916</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>597</td>
+      <td>ID12698</td>
+      <td>-0.789951</td>
+      <td>-0.895210</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>598</td>
+      <td>ID12699</td>
+      <td>-0.928600</td>
+      <td>-0.993237</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>599</td>
+      <td>ID12700</td>
+      <td>-0.304680</td>
+      <td>-0.066083</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+    </tr>
+  </tbody>
+</table>
+<p>600 rows &#215; 12 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">bank_new</span> <span class="o">=</span> <span class="n">bank_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">bank_new</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[19]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>income</th>
+      <th>children</th>
+      <th>gender</th>
+      <th>region</th>
+      <th>married</th>
+      <th>car</th>
+      <th>savings_acct</th>
+      <th>current_acct</th>
+      <th>mortgage</th>
+      <th>pep</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.388563</td>
+      <td>-0.773523</td>
+      <td>1</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>-0.166032</td>
+      <td>0.198541</td>
+      <td>3</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.596536</td>
+      <td>-0.848766</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>-1.344546</td>
+      <td>-0.554180</td>
+      <td>3</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>1.012482</td>
+      <td>1.787071</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>RURAL</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>595</td>
+      <td>1.289779</td>
+      <td>1.511765</td>
+      <td>2</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>596</td>
+      <td>-0.859275</td>
+      <td>-1.383916</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>597</td>
+      <td>-0.789951</td>
+      <td>-0.895210</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>598</td>
+      <td>-0.928600</td>
+      <td>-0.993237</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>599</td>
+      <td>-0.304680</td>
+      <td>-0.066083</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+    </tr>
+  </tbody>
+</table>
+<p>600 rows &#215; 11 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">bank_seperate</span> <span class="o">=</span> <span class="n">bank_new</span><span class="p">[[</span><span class="s2">&quot;age&quot;</span><span class="p">,</span> <span class="s2">&quot;income&quot;</span><span class="p">,</span> <span class="s2">&quot;children&quot;</span><span class="p">,</span> <span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;region&quot;</span><span class="p">,</span> <span class="s2">&quot;married&quot;</span><span class="p">,</span> <span class="s2">&quot;car&quot;</span><span class="p">,</span> <span class="s2">&quot;savings_acct&quot;</span><span class="p">,</span> <span class="s2">&quot;current_acct&quot;</span><span class="p">,</span> <span class="s2">&quot;mortgage&quot;</span><span class="p">]]</span>
+<span class="n">bank_seperate</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>income</th>
+      <th>children</th>
+      <th>gender</th>
+      <th>region</th>
+      <th>married</th>
+      <th>car</th>
+      <th>savings_acct</th>
+      <th>current_acct</th>
+      <th>mortgage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.388563</td>
+      <td>-0.773523</td>
+      <td>1</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>-0.166032</td>
+      <td>0.198541</td>
+      <td>3</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.596536</td>
+      <td>-0.848766</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>-1.344546</td>
+      <td>-0.554180</td>
+      <td>3</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>1.012482</td>
+      <td>1.787071</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>RURAL</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>595</td>
+      <td>1.289779</td>
+      <td>1.511765</td>
+      <td>2</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>596</td>
+      <td>-0.859275</td>
+      <td>-1.383916</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>597</td>
+      <td>-0.789951</td>
+      <td>-0.895210</td>
+      <td>0</td>
+      <td>FEMALE</td>
+      <td>TOWN</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>NO</td>
+    </tr>
+    <tr>
+      <td>598</td>
+      <td>-0.928600</td>
+      <td>-0.993237</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>INNER_CITY</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+    </tr>
+    <tr>
+      <td>599</td>
+      <td>-0.304680</td>
+      <td>-0.066083</td>
+      <td>0</td>
+      <td>MALE</td>
+      <td>TOWN</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>NO</td>
+      <td>YES</td>
+      <td>YES</td>
+    </tr>
+  </tbody>
+</table>
+<p>600 rows &#215; 10 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">bank_target</span> <span class="o">=</span> <span class="n">bank_new</span><span class="p">[</span><span class="s2">&quot;pep&quot;</span><span class="p">]</span>
+<span class="n">bank_target</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0      YES
+1       NO
+2       NO
+3       NO
+4       NO
+      ... 
+595     NO
+596     NO
+597    YES
+598     NO
+599    YES
+Name: pep, Length: 600, dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">bank_d</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">bank_seperate</span><span class="p">)</span>
+<span class="n">bank_d</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>income</th>
+      <th>children</th>
+      <th>gender_FEMALE</th>
+      <th>gender_MALE</th>
+      <th>region_INNER_CITY</th>
+      <th>region_RURAL</th>
+      <th>region_SUBURBAN</th>
+      <th>region_TOWN</th>
+      <th>married_NO</th>
+      <th>married_YES</th>
+      <th>car_NO</th>
+      <th>car_YES</th>
+      <th>savings_acct_NO</th>
+      <th>savings_acct_YES</th>
+      <th>current_acct_NO</th>
+      <th>current_acct_YES</th>
+      <th>mortgage_NO</th>
+      <th>mortgage_YES</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.388563</td>
+      <td>-0.773523</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>-0.166032</td>
+      <td>0.198541</td>
+      <td>3</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.596536</td>
+      <td>-0.848766</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>-1.344546</td>
+      <td>-0.554180</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>1.012482</td>
+      <td>1.787071</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>595</td>
+      <td>1.289779</td>
+      <td>1.511765</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>596</td>
+      <td>-0.859275</td>
+      <td>-1.383916</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>597</td>
+      <td>-0.789951</td>
+      <td>-0.895210</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>598</td>
+      <td>-0.928600</td>
+      <td>-0.993237</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>599</td>
+      <td>-0.304680</td>
+      <td>-0.066083</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>600 rows &#215; 19 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">target_train</span><span class="p">,</span> <span class="n">target_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">bank_d</span><span class="p">,</span> <span class="n">bank_target</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">train</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[24]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>income</th>
+      <th>children</th>
+      <th>gender_FEMALE</th>
+      <th>gender_MALE</th>
+      <th>region_INNER_CITY</th>
+      <th>region_RURAL</th>
+      <th>region_SUBURBAN</th>
+      <th>region_TOWN</th>
+      <th>married_NO</th>
+      <th>married_YES</th>
+      <th>car_NO</th>
+      <th>car_YES</th>
+      <th>savings_acct_NO</th>
+      <th>savings_acct_YES</th>
+      <th>current_acct_NO</th>
+      <th>current_acct_YES</th>
+      <th>mortgage_NO</th>
+      <th>mortgage_YES</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>281</td>
+      <td>-1.691167</td>
+      <td>-0.923591</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>571</td>
+      <td>-0.166032</td>
+      <td>0.669963</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>543</td>
+      <td>1.428428</td>
+      <td>1.647081</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>421</td>
+      <td>0.457887</td>
+      <td>1.078647</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>85</td>
+      <td>-0.443329</td>
+      <td>0.322422</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>0.665860</td>
+      <td>-0.067075</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>83</td>
+      <td>-0.512654</td>
+      <td>-0.862798</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>314</td>
+      <td>0.804509</td>
+      <td>-0.735482</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>597</td>
+      <td>-0.789951</td>
+      <td>-0.895210</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>266</td>
+      <td>1.081806</td>
+      <td>0.442264</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">test</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[25]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>income</th>
+      <th>children</th>
+      <th>gender_FEMALE</th>
+      <th>gender_MALE</th>
+      <th>region_INNER_CITY</th>
+      <th>region_RURAL</th>
+      <th>region_SUBURBAN</th>
+      <th>region_TOWN</th>
+      <th>married_NO</th>
+      <th>married_YES</th>
+      <th>car_NO</th>
+      <th>car_YES</th>
+      <th>savings_acct_NO</th>
+      <th>savings_acct_YES</th>
+      <th>current_acct_NO</th>
+      <th>current_acct_YES</th>
+      <th>mortgage_NO</th>
+      <th>mortgage_YES</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>326</td>
+      <td>-0.235356</td>
+      <td>0.568106</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>360</td>
+      <td>1.497752</td>
+      <td>1.868044</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>348</td>
+      <td>1.428428</td>
+      <td>0.806767</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>567</td>
+      <td>-1.621843</td>
+      <td>-0.787081</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>244</td>
+      <td>0.527212</td>
+      <td>0.023371</td>
+      <td>2</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>294</td>
+      <td>-0.027383</td>
+      <td>-0.389809</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>193</td>
+      <td>-0.096707</td>
+      <td>-0.874007</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>589</td>
+      <td>-0.928600</td>
+      <td>-1.155135</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>405</td>
+      <td>0.319239</td>
+      <td>0.703515</td>
+      <td>3</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>383</td>
+      <td>-0.166032</td>
+      <td>0.566905</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">n_neighbors</span> <span class="o">=</span> <span class="mi">7</span>
+
+<span class="n">knnclf</span> <span class="o">=</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;distance&#39;</span><span class="p">)</span>
+<span class="n">knnclf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[41]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>KNeighborsClassifier(algorithm=&#39;auto&#39;, leaf_size=30, metric=&#39;minkowski&#39;,
+                     metric_params=None, n_jobs=None, n_neighbors=7, p=2,
+                     weights=&#39;distance&#39;)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">knnpreds_test</span> <span class="o">=</span> <span class="n">knnclf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">target_test</span><span class="p">,</span> <span class="n">knnpreds_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>              precision    recall  f1-score   support
+
+          NO       0.81      0.72      0.76        65
+         YES       0.71      0.80      0.75        55
+
+    accuracy                           0.76       120
+   macro avg       0.76      0.76      0.76       120
+weighted avg       0.76      0.76      0.76       120
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>for k=5 accuracy = 0.72
+    k= 7 accuracy = 0.76
+    k=9 accuracy = 0.74</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">knncm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">target_test</span><span class="p">,</span> <span class="n">knnpreds_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">knncm</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[47 18]
+ [11 44]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">knnclf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">target_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.7583333333333333
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">knnclf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target_train</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1.0
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Decision tree</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">treeclf</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;entropy&#39;</span><span class="p">,</span> <span class="n">min_samples_split</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">treeclf</span> <span class="o">=</span> <span class="n">treeclf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[49]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">treepreds_test</span> <span class="o">=</span> <span class="n">treeclf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">treepreds_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39;
+ &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39;
+ &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39;
+ &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39;
+ &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39;
+ &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39;
+ &#39;YES&#39; &#39;YES&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">treeclf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">target_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.85
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[53]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">treeclf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target_train</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.99375
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[54]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">target_test</span><span class="p">,</span> <span class="n">treepreds_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>              precision    recall  f1-score   support
+
+          NO       0.87      0.85      0.86        65
+         YES       0.82      0.85      0.84        55
+
+    accuracy                           0.85       120
+   macro avg       0.85      0.85      0.85       120
+weighted avg       0.85      0.85      0.85       120
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[56]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">treecm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">target_test</span><span class="p">,</span> <span class="n">treepreds_test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">treecm</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[55 10]
+ [ 8 47]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[57]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">treecm</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Confusion matrix&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea">
+<img src="javascript://"/>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Gaussian naive Bayes classifier</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[58]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">nbclf</span> <span class="o">=</span> <span class="n">naive_bayes</span><span class="o">.</span><span class="n">GaussianNB</span><span class="p">()</span>
+<span class="n">nbclf</span> <span class="o">=</span> <span class="n">nbclf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target_train</span><span class="p">)</span>
+<span class="n">nbpreds_test</span> <span class="o">=</span> <span class="n">nbclf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nbpreds_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39;
+ &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39;
+ &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39;
+ &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39;
+ &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39;
+ &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39;
+ &#39;YES&#39; &#39;NO&#39;]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[59]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">nbclf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target_train</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6354166666666666
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[61]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">nbclf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">target_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6583333333333333
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>linear discriminant analysis</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[63]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="k">import</span> <span class="n">LinearDiscriminantAnalysis</span>
+<span class="n">ldclf</span> <span class="o">=</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">()</span>
+<span class="n">ldclf</span> <span class="o">=</span> <span class="n">ldclf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target_train</span><span class="p">)</span>
+<span class="n">ldpreds_test</span> <span class="o">=</span> <span class="n">ldclf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ldpreds_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39;
+ &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39;
+ &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39;
+ &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39;
+ &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;NO&#39;
+ &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;YES&#39; &#39;YES&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;NO&#39; &#39;YES&#39;
+ &#39;NO&#39;]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[65]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ldclf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">target_train</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6270833333333333
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[66]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ldclf</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">target_test</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6833333333333333
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[72]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">cross_val_score</span>
+<span class="n">cv_scores_tree</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">treeclf</span><span class="p">,</span> <span class="n">bank_d</span><span class="p">,</span> <span class="n">bank_target</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cv_scores_tree</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0.86885246 0.83606557 0.85245902 0.86885246 0.85       0.83333333
+ 0.84745763 0.81355932 0.76271186 0.83050847]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[73]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">cv_scores_nb</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">nbclf</span><span class="p">,</span> <span class="n">bank_d</span><span class="p">,</span> <span class="n">bank_target</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cv_scores_nb</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0.68852459 0.6557377  0.52459016 0.63934426 0.61666667 0.63333333
+ 0.6779661  0.55932203 0.72881356 0.62711864]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[74]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">cv_scores_ld</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">ldclf</span><span class="p">,</span> <span class="n">bank_d</span><span class="p">,</span> <span class="n">bank_target</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cv_scores_ld</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0.62295082 0.6557377  0.52459016 0.63934426 0.63333333 0.58333333
+ 0.62711864 0.61016949 0.69491525 0.61016949]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+C:\Users\Milin Desai\Anaconda3\lib\site-packages\sklearn\discriminant_analysis.py:388: UserWarning: Variables are collinear.
+  warnings.warn(&quot;Variables are collinear.&quot;)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[75]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cv_scores_tree</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.8363800129665648
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[76]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cv_scores_nb</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6351417060294526
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[77]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cv_scores_ld</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6201662498842272
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From the above crossvalidation scores we can Infer that decision tree has maximum accuracy</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[&#160;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+
+
+ 
+
+
+
+<script type="text/javascript" src="/d2l/common/math/MathML.js?v=20.20.10.24951-324 "></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() { D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML','130'); });</script></body></html>
