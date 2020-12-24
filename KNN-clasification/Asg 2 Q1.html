@@ -1,0 +1,1787 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+
+  <div class="border-box-sizing">
+    <div class="container">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">knn</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">measure</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; find K nearest neighbors of an instance x among the instances in D &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">measure</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># euclidean distances from the other points</span>
+        <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">train</span> <span class="o">-</span> <span class="n">test</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">measure</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Cosine similarity</span>
+        <span class="n">train_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">))])</span>
+        <span class="n">test_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+        <span class="n">sims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="n">test</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">train_norm</span> <span class="o">*</span> <span class="n">test_norm</span><span class="p">)</span>
+        <span class="n">dists</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sims</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dists</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[:</span><span class="n">K</span><span class="p">]</span>
+    <span class="n">knn_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n</span><span class="p">]</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">knn_labels</span><span class="p">)</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">evaluation</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">train_l</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">test_l</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">measure</span><span class="p">):</span>
+    <span class="n">tpos</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">tneg</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">fpos</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">fneg</span> <span class="o">=</span> <span class="mi">0</span> 
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">)):</span>
+        <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">knn</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">train</span><span class="p">,</span> <span class="n">train_l</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">measure</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="n">test_l</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">tpos</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">p</span> <span class="o">==</span> <span class="n">test_l</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tneg</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">test_l</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fpos</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fneg</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+    <span class="n">overall_accuracy</span> <span class="o">=</span> <span class="p">(</span><span class="n">tpos</span> <span class="o">+</span> <span class="n">tneg</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">tpos</span> <span class="o">+</span> <span class="n">tneg</span> <span class="o">+</span> <span class="n">fpos</span> <span class="o">+</span> <span class="n">fneg</span><span class="p">)</span>
+    <span class="n">w_acc</span> <span class="o">=</span> <span class="n">tpos</span> <span class="o">/</span> <span class="p">(</span><span class="n">tpos</span> <span class="o">+</span> <span class="n">fneg</span><span class="p">)</span>
+    <span class="n">h_acc</span> <span class="o">=</span> <span class="n">tneg</span> <span class="o">/</span> <span class="p">(</span><span class="n">tneg</span> <span class="o">+</span> <span class="n">fpos</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">overall_accuracy</span><span class="p">,</span> <span class="n">w_acc</span><span class="p">,</span> <span class="n">h_acc</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Desktop\newsgroups\trainMatrixModified.txt&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">train</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[31]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>...</th>
+      <th>790</th>
+      <th>791</th>
+      <th>792</th>
+      <th>793</th>
+      <th>794</th>
+      <th>795</th>
+      <th>796</th>
+      <th>797</th>
+      <th>798</th>
+      <th>799</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>3.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>8.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>5495</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>5496</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>5497</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>5498</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>5499</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5500 rows &#215; 800 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">train_l</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Desktop\newsgroups\trainClasses.txt&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">train_l</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[32]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>4</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>795</td>
+      <td>795</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>796</td>
+      <td>796</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>797</td>
+      <td>797</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>798</td>
+      <td>798</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>799</td>
+      <td>799</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>800 rows &#215; 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Desktop\newsgroups\testMatrixModified.txt&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">test</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[33]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>...</th>
+      <th>190</th>
+      <th>191</th>
+      <th>192</th>
+      <th>193</th>
+      <th>194</th>
+      <th>195</th>
+      <th>196</th>
+      <th>197</th>
+      <th>198</th>
+      <th>199</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>5495</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>5496</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>5497</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>5498</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>5499</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5500 rows &#215; 200 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">test_l</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Desktop\newsgroups\testClasses.txt&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">test_l</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[34]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>4</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>195</td>
+      <td>195</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>196</td>
+      <td>196</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>197</td>
+      <td>197</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>198</td>
+      <td>198</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>199</td>
+      <td>199</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>200 rows &#215; 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+<span class="n">train</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[37]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[2., 2., 2., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.],
+       ...,
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="n">test</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[38]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.],
+       [1., 0., 0., ..., 0., 0., 0.],
+       ...,
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.],
+       [0., 0., 0., ..., 0., 0., 0.]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[49]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">accuracy</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">overall_accuracy</span><span class="p">,</span> <span class="n">w_acc</span><span class="p">,</span> <span class="n">h_acc</span> <span class="o">=</span> <span class="n">evaluation</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">train_l</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">test_l</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">accuracy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">overall_accuracy</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[50]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">accuracy</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[50]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[0.775,
+ 0.775,
+ 0.805,
+ 0.805,
+ 0.81,
+ 0.83,
+ 0.76,
+ 0.795,
+ 0.745,
+ 0.845,
+ 0.79,
+ 0.84,
+ 0.77,
+ 0.81,
+ 0.78,
+ 0.795,
+ 0.755,
+ 0.78,
+ 0.735]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[53]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">accuracy_one</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">overall_accuracy</span><span class="p">,</span> <span class="n">w_acc</span><span class="p">,</span> <span class="n">h_acc</span> <span class="o">=</span> <span class="n">evaluation</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">train_l</span><span class="p">,</span> <span class="n">test</span><span class="p">,</span> <span class="n">test_l</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">accuracy_one</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">overall_accuracy</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[54]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">accuracy_one</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[54]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[0.98,
+ 0.98,
+ 0.965,
+ 0.98,
+ 0.965,
+ 0.98,
+ 0.975,
+ 0.975,
+ 0.97,
+ 0.98,
+ 0.975,
+ 0.97,
+ 0.975,
+ 0.975,
+ 0.98,
+ 0.975,
+ 0.97,
+ 0.97,
+ 0.97]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[61]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">numTerms_train</span><span class="o">=</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">NDocs_train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[62]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">DF_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="n">train</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+<span class="n">DF_train</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[62]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>98</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>61</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>43</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>35</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>26</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>795</td>
+      <td>24</td>
+    </tr>
+    <tr>
+      <td>796</td>
+      <td>33</td>
+    </tr>
+    <tr>
+      <td>797</td>
+      <td>74</td>
+    </tr>
+    <tr>
+      <td>798</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>799</td>
+      <td>81</td>
+    </tr>
+  </tbody>
+</table>
+<p>800 rows &#215; 1 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[66]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">NMatrix_train</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">train</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">*</span><span class="n">NDocs_train</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">NMatrix_train</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[5500. 5500. 5500. ... 5500. 5500. 5500.]
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]
+ ...
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[67]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">IDF_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">NMatrix_train</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">DF_train</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[68]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">IDF_train</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[68]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 5.81,  5.81,  5.81, ...,  5.81,  5.81,  5.81],
+       [ 6.49,  6.49,  6.49, ...,  6.49,  6.49,  6.49],
+       [ 7.  ,  7.  ,  7.  , ...,  7.  ,  7.  ,  7.  ],
+       ...,
+       [ 6.22,  6.22,  6.22, ...,  6.22,  6.22,  6.22],
+       [11.43, 11.43, 11.43, ..., 11.43, 11.43, 11.43],
+       [ 6.09,  6.09,  6.09, ...,  6.09,  6.09,  6.09]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[70]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">TD_tfidf_train</span> <span class="o">=</span> <span class="n">train</span> <span class="o">*</span> <span class="n">IDF_train</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[71]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.precision&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">TD_tfidf_train</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[71]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[11.62, 11.62, 11.62, ...,  0.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  ,  0.  , ...,  0.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  ,  0.  , ...,  0.  ,  0.  ,  0.  ],
+       ...,
+       [ 0.  ,  0.  ,  0.  , ...,  0.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  ,  0.  , ...,  0.  ,  0.  ,  0.  ],
+       [ 0.  ,  0.  ,  0.  , ...,  0.  ,  0.  ,  0.  ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[72]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">numTerms_test</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">NDocs_test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[73]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">DF_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([(</span><span class="n">test</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+<span class="n">DF_test</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[73]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>117</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>47</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>243</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>54</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>195</td>
+      <td>33</td>
+    </tr>
+    <tr>
+      <td>196</td>
+      <td>171</td>
+    </tr>
+    <tr>
+      <td>197</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <td>198</td>
+      <td>59</td>
+    </tr>
+    <tr>
+      <td>199</td>
+      <td>22</td>
+    </tr>
+  </tbody>
+</table>
+<p>200 rows &#215; 1 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[74]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">NMatrix_test</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">test</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">*</span><span class="n">NDocs_test</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">NMatrix_test</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[5500. 5500. 5500. ... 5500. 5500. 5500.]
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]
+ ...
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]
+ [5500. 5500. 5500. ... 5500. 5500. 5500.]]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[75]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">IDF_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">NMatrix_test</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">DF_test</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[76]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">IDF_test</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[76]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[5.55, 5.55, 5.55, ..., 5.55, 5.55, 5.55],
+       [6.87, 6.87, 6.87, ..., 6.87, 6.87, 6.87],
+       [6.78, 6.78, 6.78, ..., 6.78, 6.78, 6.78],
+       ...,
+       [9.26, 9.26, 9.26, ..., 9.26, 9.26, 9.26],
+       [6.54, 6.54, 6.54, ..., 6.54, 6.54, 6.54],
+       [7.97, 7.97, 7.97, ..., 7.97, 7.97, 7.97]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[77]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">TD_tfidf_test</span> <span class="o">=</span> <span class="n">test</span> <span class="o">*</span> <span class="n">IDF_test</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.precision&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">TD_tfidf_test</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[77]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.  , 0.  , 0.  , ..., 0.  , 0.  , 0.  ],
+       [0.  , 0.  , 0.  , ..., 0.  , 0.  , 0.  ],
+       [6.78, 0.  , 0.  , ..., 0.  , 0.  , 0.  ],
+       ...,
+       [0.  , 0.  , 0.  , ..., 0.  , 0.  , 0.  ],
+       [0.  , 0.  , 0.  , ..., 0.  , 0.  , 0.  ],
+       [0.  , 0.  , 0.  , ..., 0.  , 0.  , 0.  ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[78]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">accuracy_one</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">overall_accuracy</span><span class="p">,</span> <span class="n">w_acc</span><span class="p">,</span> <span class="n">h_acc</span> <span class="o">=</span> <span class="n">evaluation</span><span class="p">(</span><span class="n">TD_tfidf_train</span><span class="p">,</span> <span class="n">train_l</span><span class="p">,</span> <span class="n">TD_tfidf_test</span><span class="p">,</span> <span class="n">test_l</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">accuracy_one</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">overall_accuracy</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[79]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">accuracy_one</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[79]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[0.98,
+ 0.98,
+ 0.965,
+ 0.985,
+ 0.965,
+ 0.98,
+ 0.975,
+ 0.975,
+ 0.97,
+ 0.98,
+ 0.975,
+ 0.97,
+ 0.975,
+ 0.975,
+ 0.98,
+ 0.975,
+ 0.97,
+ 0.97,
+ 0.97]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[&#160;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+
+
+ 
+
+
+
+<script type="text/javascript" src="/d2l/common/math/MathML.js?v=20.20.10.24951-324 "></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() { D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML','130'); });</script></body></html>
