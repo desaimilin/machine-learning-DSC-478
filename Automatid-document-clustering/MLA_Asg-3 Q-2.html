@@ -1,0 +1,2204 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+
+  <div class="border-box-sizing">
+    <div class="container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1>2. Clusturing<a rel="noopener" class="anchor-link" href="#2.-Clusturing">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>a)<a rel="noopener" class="anchor-link" href="#a)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
+
+
+<span class="k">def</span> <span class="nf">cos_similarity</span><span class="p">(</span><span class="n">xbar</span><span class="p">,</span> <span class="n">ybar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finding the K nearest neighbors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">D_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">xbar</span><span class="p">)</span>
+    <span class="n">x_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">ybar</span><span class="p">)</span>
+    
+    <span class="n">similarity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xbar</span><span class="p">,</span><span class="n">ybar</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">D_hat</span> <span class="o">*</span> <span class="n">x_hat</span><span class="p">)</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">similarity</span>
+
+    <span class="k">return</span> <span class="n">distance</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pwd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&#39;C:\\Users\\Milin Desai&#39;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4>B) Data Importing<a rel="noopener" class="anchor-link" href="#B)-Data-Importing">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Downloads\newsgroups5/matrix.txt&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">classes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Downloads\newsgroups5/classes.txt&#39;</span><span class="p">,</span> <span class="n">delim_whitespace</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">terms</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Downloads\newsgroups5/terms.txt&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Using Transpose</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">news_groups</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">T</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(9328, 2500)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">classes</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(2500, 12)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">terms</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(9328, 1)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">terms</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>aa</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>aargh</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>aaron</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>aaronc</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ab</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">matrix</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[9]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>...</th>
+      <th>2490</th>
+      <th>2491</th>
+      <th>2492</th>
+      <th>2493</th>
+      <th>2494</th>
+      <th>2495</th>
+      <th>2496</th>
+      <th>2497</th>
+      <th>2498</th>
+      <th>2499</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows &#215; 2500 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">classes</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Five</th>
+      <th>Categories:</th>
+      <th>windows</th>
+      <th>(0),</th>
+      <th>crypt</th>
+      <th>(1),</th>
+      <th>christian</th>
+      <th>(2),</th>
+      <th>hockey</th>
+      <th>(3),</th>
+      <th>forsale</th>
+      <th>(4)</th>
+    </tr>
+    <tr>
+      <th>%</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We need to correctly formate the news group data set</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">classes</span> <span class="o">=</span> <span class="n">classes</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">1</span><span class="p">]</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">classes</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Five</th>
+    </tr>
+    <tr>
+      <th>%</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">matrix</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">1</span><span class="p">]</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">matrix</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">terms</span> <span class="o">=</span> <span class="n">terms</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">terms</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[16]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>aa</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>aargh</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>aaron</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>aaronc</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>ab</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">classes</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Five&#39;</span><span class="p">:</span><span class="s1">&#39;Subset of five categories: windows (0), crypt (1), christian (2), hockey (3), forsale (4)&#39;</span><span class="p">},</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>           
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">classes</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Subset of five categories: windows (0), crypt (1), christian (2), hockey (3), forsale (4)</th>
+    </tr>
+    <tr>
+      <th>%</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Data splitting 80/20</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">classes_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">dt_tr</span><span class="p">,</span> <span class="n">dt_ts</span><span class="p">,</span> <span class="n">lab_dttr</span><span class="p">,</span> <span class="n">lab_dtts</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">news_groups</span><span class="p">,</span> <span class="n">classes</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">dt_tr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(2000, 9328)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">dt_ts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(500, 9328)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">lab_dttr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(2000, 1)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">lab_dtts</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(500, 1)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>D)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">completeness_score</span><span class="p">,</span> <span class="n">homogeneity_score</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">np_dt_tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dt_tr</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">kMeans</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">cosine_centroids</span><span class="p">,</span> <span class="n">cosine_clusters</span> <span class="o">=</span> <span class="n">kMeans</span><span class="o">.</span><span class="n">kMeans</span><span class="p">(</span><span class="n">np_dt_tr</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">cos_similarity</span><span class="p">,</span> <span class="n">kMeans</span><span class="o">.</span><span class="n">randCent</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">cosine_clusters</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cosine_clusters</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Cluster&#39;</span><span class="p">,</span> <span class="s1">&#39;MinDistance**3&#39;</span><span class="p">])</span>
+<span class="n">cosine_centroids</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cosine_centroids</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">terms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">Cluster</span> <span class="o">==</span> <span class="mf">4.0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(6, 2)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">Cluster</span> <span class="o">==</span> <span class="mf">3.0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(0, 2)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">Cluster</span> <span class="o">==</span> <span class="mf">2.0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(773, 2)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">Cluster</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(0, 2)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">Cluster</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>      Cluster  MinDistance**3
+0         0.0        0.440426
+1         0.0        0.600493
+2         0.0        0.676524
+3         0.0        0.523850
+4         0.0        0.558270
+...       ...             ...
+1991      0.0        0.529930
+1993      0.0        0.588171
+1994      0.0        0.621447
+1995      0.0        0.544612
+1999      0.0        0.694517
+
+[1221 rows x 2 columns]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">lab_dttr</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">L_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lab_dttr</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">forcast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cosine_clusters</span><span class="o">.</span><span class="n">Cluster</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">forcast</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">L_target</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>(2000,) (2000,)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">L_target</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[37]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([0, 2, 2, ..., 3, 4, 0], dtype=int64)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">homogeneity_score</span><span class="p">(</span><span class="n">L_target</span><span class="p">,</span> <span class="n">forcast</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[38]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.3081642870028716</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">completeness_score</span><span class="p">(</span><span class="n">L_target</span><span class="p">,</span> <span class="n">forcast</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[39]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.7226989536670834</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>E)<a rel="noopener" class="anchor-link" href="#E)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[41]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">Cluster_pulse</span><span class="p">(</span><span class="n">xbar</span><span class="p">,</span> <span class="n">ybar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; find K nearest neighbors of an instance x among the instances in D &quot;&quot;&quot;</span>
+    
+    <span class="n">D_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">xbar</span><span class="p">)</span>
+    <span class="n">x_hat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">ybar</span><span class="p">)</span>
+    
+    <span class="n">similarity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xbar</span><span class="p">,</span><span class="n">ybar</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">D_hat</span> <span class="o">*</span> <span class="n">x_hat</span><span class="p">)</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">similarity</span>
+    
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span> <span class="c1"># sorting</span>
+    <span class="c1"># return the indexes of K nearest neighbors</span>
+    <span class="k">return</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">max</span><span class="p">(</span><span class="n">similarity</span><span class="p">)</span>
+<span class="n">cluster_centroids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cosine_centroids</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">xbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cosine_centroids</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">np_dt_ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dt_ts</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">forcast_ts_class</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np_dt_ts</span><span class="p">)):</span> 
+    <span class="n">cluster_class</span><span class="p">,</span> <span class="n">similarity</span> <span class="o">=</span> <span class="n">Cluster_pulse</span><span class="p">(</span><span class="n">cluster_centroids</span><span class="p">,</span> <span class="n">np_dt_ts</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="n">forcast_ts_class</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cluster_class</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%-12i%-12i</span><span class="s2">   </span><span class="si">%-12f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">cluster_class</span><span class="p">,</span> <span class="n">similarity</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0           3              0.001842    
+1           3              0.004029    
+2           1              0.002492    
+3           1              0.002706    
+4           3              0.050270    
+5           3              0.001806    
+6           1              0.002407    
+7           1              0.003035    
+8           3              0.001715    
+9           1              0.003612    
+10          1              0.000327    
+11          3              0.005570    
+12          1              0.003853    
+13          3              0.001988    
+14          3              0.003786    
+15          3              0.003537    
+16          3              0.002461    
+17          3              0.003829    
+18          3              0.004553    
+19          3              0.001901    
+20          3              0.003450    
+21          3              0.003633    
+22          1              0.004045    
+23          1              0.001608    
+24          1              0.003514    
+25          3              0.003876    
+26          3              0.000751    
+27          1              0.003278    
+28          1              0.003166    
+29          1              0.001161    
+30          1              0.002496    
+31          1              0.002567    
+32          3              0.001826    
+33          1              0.002248    
+34          3              0.002763    
+35          3              0.002460    
+36          1              0.002579    
+37          3              0.003353    
+38          3              0.002441    
+39          1              0.001767    
+40          3              0.003057    
+41          3              0.003515    
+42          3              0.002485    
+43          3              0.001847    
+44          1              0.002948    
+45          1              0.003183    
+46          1              0.004957    
+47          3              0.003426    
+48          1              0.002261    
+49          3              0.002074    
+50          1              0.004269    
+51          1              0.006342    
+52          3              0.004132    
+53          1              0.000437    
+54          3              0.002637    
+55          1              0.001181    
+56          1              0.003367    
+57          3              0.002590    
+58          1              0.002028    
+59          3              0.004170    
+60          3              0.002998    
+61          3              0.004898    
+62          1              0.002689    
+63          3              0.004444    
+64          1              0.001490    
+65          1              0.008393    
+66          1              0.002162    
+67          3              0.003851    
+68          3              0.004625    
+69          1              0.001675    
+70          3              0.002966    
+71          1              0.003288    
+72          1              0.001479    
+73          3              0.004699    
+74          3              0.003695    
+75          3              0.001469    
+76          3              0.002191    
+77          1              0.002254    
+78          1              0.003900    
+79          1              0.002601    
+80          3              0.002918    
+81          1              0.002590    
+82          1              0.001865    
+83          1              0.002904    
+84          3              0.002776    
+85          1              0.001141    
+86          1              0.003189    
+87          1              0.002775    
+88          1              0.002695    
+89          3              0.004099    
+90          1              0.004821    
+91          1              0.001947    
+92          1              0.003359    
+93          3              0.003721    
+94          1              0.002102    
+95          1              0.001682    
+96          3              0.002687    
+97          3              0.001794    
+98          1              0.003404    
+99          3              0.002317    
+100         3              0.001642    
+101         1              0.002013    
+102         3              0.004796    
+103         3              0.007123    
+104         3              0.004208    
+105         1              0.003102    
+106         3              0.002889    
+107         1              0.002195    
+108         3              0.005003    
+109         3              0.004899    
+110         3              0.002338    
+111         3              0.002179    
+112         3              0.003273    
+113         1              0.002034    
+114         1              0.002285    
+115         3              0.003364    
+116         3              0.002527    
+117         1              0.002975    
+118         3              0.003846    
+119         1              0.003697    
+120         3              0.002541    
+121         1              0.002674    
+122         1              0.002826    
+123         3              0.002573    
+124         3              0.000850    
+125         3              0.003857    
+126         3              0.003810    
+127         3              0.001316    
+128         3              0.001535    
+129         3              0.001827    
+130         1              0.002256    
+131         3              0.001583    
+132         3              0.004863    
+133         3              0.004125    
+134         1              0.004052    
+135         1              0.002325    
+136         3              0.005315    
+137         1              0.003052    
+138         1              0.001047    
+139         1              0.003024    
+140         3              0.002060    
+141         3              0.004088    
+142         1              0.003307    
+143         3              0.007930    
+144         3              0.005130    
+145         1              0.001106    
+146         3              0.003770    
+147         3              0.001248    
+148         3              0.002599    
+149         1              0.000925    
+150         3              0.006332    
+151         1              0.002048    
+152         3              0.011760    
+153         1              0.001545    
+154         1              0.003174    
+155         1              0.001435    
+156         1              0.003821    
+157         3              0.002190    
+158         1              0.004643    
+159         1              0.003019    
+160         3              0.002962    
+161         1              0.002001    
+162         1              0.003861    
+163         1              0.002121    
+164         1              0.001347    
+165         1              0.002628    
+166         1              0.003818    
+167         1              0.001961    
+168         3              0.005861    
+169         3              0.001007    
+170         3              0.002128    
+171         3              0.001744    
+172         1              0.002832    
+173         1              0.002959    
+174         3              0.003416    
+175         1              0.000753    
+176         1              0.002613    
+177         3              0.001170    
+178         3              0.004527    
+179         1              0.001027    
+180         3              0.001025    
+181         1              0.003670    
+182         1              0.003227    
+183         1              0.002063    
+184         1              0.003266    
+185         3              0.003771    
+186         1              0.001620    
+187         1              0.003847    
+188         1              0.002680    
+189         1              0.001729    
+190         1              0.001826    
+191         3              0.001579    
+192         1              0.003804    
+193         3              0.001016    
+194         1              0.002672    
+195         3              0.004984    
+196         1              0.002366    
+197         3              0.001339    
+198         3              0.003874    
+199         1              0.003122    
+200         3              0.004269    
+201         1              0.002845    
+202         1              0.002645    
+203         3              0.000920    
+204         1              0.001697    
+205         1              0.005934    
+206         3              0.001658    
+207         3              0.001501    
+208         3              0.003454    
+209         3              0.004810    
+210         3              0.001831    
+211         1              0.003270    
+212         3              0.001937    
+213         3              0.002985    
+214         3              0.003915    
+215         1              0.000723    
+216         3              0.004556    
+217         1              0.002314    
+218         1              0.001135    
+219         1              0.002261    
+220         3              0.002536    
+221         3              0.002583    
+222         3              0.002260    
+223         1              0.001132    
+224         3              0.002572    
+225         1              0.002357    
+226         1              0.002819    
+227         3              0.003682    
+228         1              0.001877    
+229         1              0.001735    
+230         1              0.003120    
+231         3              0.002346    
+232         1              0.002158    
+233         1              0.002386    
+234         1              0.001505    
+235         3              0.004355    
+236         3              0.003015    
+237         3              0.002851    
+238         1              0.002834    
+239         3              0.004252    
+240         3              0.002356    
+241         3              0.002778    
+242         3              0.002913    
+243         3              0.002667    
+244         3              0.003395    
+245         3              0.004112    
+246         3              0.003181    
+247         3              0.003078    
+248         3              0.001863    
+249         1              0.001511    
+250         3              0.002676    
+251         3              0.002710    
+252         1              0.003420    
+253         3              0.002971    
+254         3              0.002299    
+255         1              0.002596    
+256         1              0.002490    
+257         3              0.003309    
+258         3              0.003692    
+259         3              0.001289    
+260         3              0.006720    
+261         1              0.002990    
+262         3              0.005524    
+263         3              0.003285    
+264         3              0.002292    
+265         1              0.003226    
+266         1              0.003220    
+267         1              0.001917    
+268         3              0.004322    
+269         3              0.002000    
+270         3              0.005028    
+271         3              0.003772    
+272         1              0.001089    
+273         1              0.004038    
+274         1              0.003112    
+275         1              0.002557    
+276         3              0.001831    
+277         1              0.002021    
+278         1              0.004468    
+279         3              0.002208    
+280         3              0.002847    
+281         1              0.001877    
+282         1              0.001202    
+283         1              0.002880    
+284         3              0.002644    
+285         1              0.004193    
+286         1              0.001263    
+287         1              0.001932    
+288         1              0.003918    
+289         3              0.004009    
+290         1              0.002667    
+291         1              0.002434    
+292         3              0.003133    
+293         1              0.002403    
+294         3              0.002911    
+295         1              0.001957    
+296         1              0.002599    
+297         3              0.004729    
+298         1              0.002656    
+299         3              0.001471    
+300         3              0.005524    
+301         3              0.003932    
+302         3              0.002040    
+303         1              0.001808    
+304         1              0.003288    
+305         3              0.002524    
+306         3              0.002538    
+307         3              0.004526    
+308         1              0.001715    
+309         3              0.001502    
+310         3              0.003029    
+311         1              0.002010    
+312         1              0.003635    
+313         3              0.002398    
+314         3              0.002618    
+315         1              0.000519    
+316         3              0.002722    
+317         1              0.002155    
+318         1              0.003155    
+319         3              0.001702    
+320         3              0.003679    
+321         1              0.002647    
+322         1              0.001718    
+323         1              0.002232    
+324         3              0.002935    
+325         3              0.003847    
+326         1              0.001730    
+327         1              0.002919    
+328         3              0.004675    
+329         3              0.003801    
+330         3              0.003382    
+331         1              0.001884    
+332         3              0.002292    
+333         1              0.003367    
+334         3              0.004075    
+335         1              0.001421    
+336         3              0.002419    
+337         4              0.007153    
+338         3              0.001327    
+339         3              0.002538    
+340         1              0.003697    
+341         1              0.002301    
+342         3              0.004274    
+343         3              0.001041    
+344         1              0.002539    
+345         1              0.003052    
+346         3              0.004226    
+347         1              0.002531    
+348         3              0.003568    
+349         3              0.004121    
+350         1              0.002958    
+351         1              0.003574    
+352         1              0.001283    
+353         1              0.001455    
+354         1              0.002864    
+355         1              0.002105    
+356         1              0.002431    
+357         1              0.002909    
+358         1              0.002524    
+359         1              0.001366    
+360         1              0.001667    
+361         3              0.002538    
+362         1              0.001554    
+363         1              0.003388    
+364         3              0.002244    
+365         3              0.001565    
+366         1              0.004100    
+367         1              0.002193    
+368         1              0.001254    
+369         1              0.001693    
+370         1              0.001627    
+371         3              0.003061    
+372         1              0.003387    
+373         1              0.002601    
+374         1              0.001975    
+375         1              0.000807    
+376         1              0.002478    
+377         3              0.003567    
+378         3              0.004333    
+379         1              0.001733    
+380         1              0.002556    
+381         3              0.002400    
+382         1              0.002055    
+383         1              0.003398    
+384         1              0.002079    
+385         1              0.003759    
+386         3              0.001876    
+387         3              0.004710    
+388         3              0.003056    
+389         3              0.002589    
+390         1              0.002939    
+391         1              0.004476    
+392         1              0.001178    
+393         1              0.002481    
+394         3              0.001903    
+395         3              0.002957    
+396         3              0.001174    
+397         3              0.002388    
+398         3              0.001862    
+399         1              0.003136    
+400         3              0.004426    
+401         1              0.003398    
+402         1              0.001316    
+403         1              0.002811    
+404         3              0.005503    
+405         3              0.002591    
+406         4              0.003642    
+407         1              0.002146    
+408         3              0.004271    
+409         3              0.002460    
+410         1              0.002387    
+411         1              0.002273    
+412         1              0.001702    
+413         1              0.003648    
+414         3              0.002235    
+415         3              0.005013    
+416         1              0.003398    
+417         1              0.003717    
+418         3              0.004989    
+419         3              0.003429    
+420         3              0.002744    
+421         3              0.001513    
+422         3              0.003125    
+423         3              0.003630    
+424         1              0.003918    
+425         1              0.003643    
+426         1              0.003256    
+427         3              0.002003    
+428         3              0.002819    
+429         1              0.002741    
+430         1              0.003657    
+431         3              0.004006    
+432         1              0.002153    
+433         1              0.001818    
+434         3              0.002132    
+435         1              0.002522    
+436         1              0.003297    
+437         1              0.001901    
+438         3              0.005318    
+439         3              0.002557    
+440         3              0.003248    
+441         3              0.002092    
+442         3              0.005904    
+443         1              0.001461    
+444         1              0.002223    
+445         1              0.002452    
+446         1              0.001678    
+447         1              0.002560    
+448         3              0.002903    
+449         1              0.003634    
+450         1              0.003208    
+451         3              0.003109    
+452         1              0.003388    
+453         1              0.002576    
+454         1              0.002105    
+455         3              0.005102    
+456         1              0.003050    
+457         3              0.002210    
+458         3              0.002386    
+459         3              0.003020    
+460         3              0.003514    
+461         1              0.003552    
+462         3              0.002548    
+463         3              0.004287    
+464         1              0.001109    
+465         3              0.002238    
+466         3              0.003395    
+467         3              0.002190    
+468         3              0.002359    
+469         1              0.002233    
+470         3              0.002625    
+471         3              0.004168    
+472         1              0.003229    
+473         3              0.004729    
+474         3              0.003825    
+475         1              0.005335    
+476         1              0.004461    
+477         1              0.586375    
+478         1              0.002543    
+479         1              0.002813    
+480         3              0.003118    
+481         1              0.001430    
+482         1              0.002404    
+483         1              0.002963    
+484         3              0.003121    
+485         1              0.001395    
+486         3              0.000968    
+487         1              0.001447    
+488         1              0.002930    
+489         3              0.003565    
+490         1              0.002251    
+491         1              0.003394    
+492         1              0.003087    
+493         1              0.000803    
+494         1              0.002017    
+495         1              0.002338    
+496         1              0.001979    
+497         3              0.001909    
+498         3              0.002550    
+499         1              0.001973    
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">ts_aim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lab_dtts</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[50]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">forcast_ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">forcast_ts_class</span><span class="p">)</span>
+<span class="n">completeness_score</span><span class="p">(</span><span class="n">ts_aim</span><span class="p">,</span> <span class="n">forcast_ts</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[50]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.03539307256937877</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">homogeneity_score</span><span class="p">(</span><span class="n">ts_aim</span><span class="p">,</span> <span class="n">forcast_ts</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[51]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0.015804917932517967</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+
+
+ 
+
+
+
+<script type="text/javascript" src="/d2l/common/math/MathML.js?v=20.20.10.24951-324 "></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() { D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML','130'); });</script></body></html>
