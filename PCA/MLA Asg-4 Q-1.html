@@ -1,0 +1,3363 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+
+  <div class="border-box-sizing">
+    <div class="container">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pylab</span> <span class="k">as</span> <span class="nn">pl</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Desktop\DePaul Winter\segmentation_data\segmentation_data.txt&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">Data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[23]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>10</th>
+      <th>11</th>
+      <th>12</th>
+      <th>13</th>
+      <th>14</th>
+      <th>15</th>
+      <th>16</th>
+      <th>17</th>
+      <th>18</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>110.0</td>
+      <td>189.0</td>
+      <td>9</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>1.000000</td>
+      <td>0.666667</td>
+      <td>1.222222</td>
+      <td>1.186342</td>
+      <td>12.925926</td>
+      <td>10.888889</td>
+      <td>9.222222</td>
+      <td>18.666668</td>
+      <td>-6.111111</td>
+      <td>-11.111111</td>
+      <td>17.222221</td>
+      <td>18.666668</td>
+      <td>0.508139</td>
+      <td>1.910864</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>86.0</td>
+      <td>187.0</td>
+      <td>9</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>1.111111</td>
+      <td>0.720082</td>
+      <td>1.444444</td>
+      <td>0.750309</td>
+      <td>13.740741</td>
+      <td>11.666667</td>
+      <td>10.333334</td>
+      <td>19.222221</td>
+      <td>-6.222222</td>
+      <td>-10.222222</td>
+      <td>16.444445</td>
+      <td>19.222221</td>
+      <td>0.463329</td>
+      <td>1.941465</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>225.0</td>
+      <td>244.0</td>
+      <td>9</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>3.388889</td>
+      <td>2.195113</td>
+      <td>3.000000</td>
+      <td>1.520234</td>
+      <td>12.259259</td>
+      <td>10.333334</td>
+      <td>9.333334</td>
+      <td>17.111110</td>
+      <td>-5.777778</td>
+      <td>-8.777778</td>
+      <td>14.555555</td>
+      <td>17.111110</td>
+      <td>0.480149</td>
+      <td>1.987902</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>47.0</td>
+      <td>232.0</td>
+      <td>9</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>1.277778</td>
+      <td>1.254621</td>
+      <td>1.000000</td>
+      <td>0.894427</td>
+      <td>12.703704</td>
+      <td>11.000000</td>
+      <td>9.000000</td>
+      <td>18.111110</td>
+      <td>-5.111111</td>
+      <td>-11.111111</td>
+      <td>16.222221</td>
+      <td>18.111110</td>
+      <td>0.500966</td>
+      <td>1.875362</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>97.0</td>
+      <td>186.0</td>
+      <td>9</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>1.166667</td>
+      <td>0.691215</td>
+      <td>1.166667</td>
+      <td>1.005540</td>
+      <td>15.592592</td>
+      <td>13.888889</td>
+      <td>11.777778</td>
+      <td>21.111110</td>
+      <td>-5.111111</td>
+      <td>-11.444445</td>
+      <td>16.555555</td>
+      <td>21.111110</td>
+      <td>0.442661</td>
+      <td>1.863654</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>2095</td>
+      <td>32.0</td>
+      <td>158.0</td>
+      <td>9</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.944445</td>
+      <td>0.862963</td>
+      <td>0.833333</td>
+      <td>0.611111</td>
+      <td>7.962963</td>
+      <td>6.333334</td>
+      <td>11.888889</td>
+      <td>5.666666</td>
+      <td>-4.888889</td>
+      <td>11.777778</td>
+      <td>-6.888889</td>
+      <td>11.888889</td>
+      <td>0.520578</td>
+      <td>-1.982834</td>
+    </tr>
+    <tr>
+      <td>2096</td>
+      <td>8.0</td>
+      <td>162.0</td>
+      <td>9</td>
+      <td>0.111111</td>
+      <td>0.0</td>
+      <td>1.611111</td>
+      <td>2.062962</td>
+      <td>0.333333</td>
+      <td>0.133333</td>
+      <td>8.370370</td>
+      <td>6.666666</td>
+      <td>12.000000</td>
+      <td>6.444445</td>
+      <td>-5.111111</td>
+      <td>10.888889</td>
+      <td>-5.777778</td>
+      <td>12.000000</td>
+      <td>0.484805</td>
+      <td>-2.044946</td>
+    </tr>
+    <tr>
+      <td>2097</td>
+      <td>128.0</td>
+      <td>161.0</td>
+      <td>9</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.555555</td>
+      <td>0.251852</td>
+      <td>0.777778</td>
+      <td>0.162963</td>
+      <td>7.148148</td>
+      <td>5.555555</td>
+      <td>10.888889</td>
+      <td>5.000000</td>
+      <td>-4.777778</td>
+      <td>11.222222</td>
+      <td>-6.444445</td>
+      <td>10.888889</td>
+      <td>0.540918</td>
+      <td>-1.996307</td>
+    </tr>
+    <tr>
+      <td>2098</td>
+      <td>150.0</td>
+      <td>158.0</td>
+      <td>9</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>2.166667</td>
+      <td>1.633334</td>
+      <td>1.388889</td>
+      <td>0.418518</td>
+      <td>8.444445</td>
+      <td>7.000000</td>
+      <td>12.222222</td>
+      <td>6.111111</td>
+      <td>-4.333334</td>
+      <td>11.333333</td>
+      <td>-7.000000</td>
+      <td>12.222222</td>
+      <td>0.503086</td>
+      <td>-1.943449</td>
+    </tr>
+    <tr>
+      <td>2099</td>
+      <td>124.0</td>
+      <td>162.0</td>
+      <td>9</td>
+      <td>0.111111</td>
+      <td>0.0</td>
+      <td>1.388889</td>
+      <td>1.129630</td>
+      <td>2.000000</td>
+      <td>0.888889</td>
+      <td>10.037037</td>
+      <td>8.000000</td>
+      <td>14.555555</td>
+      <td>7.555555</td>
+      <td>-6.111111</td>
+      <td>13.555555</td>
+      <td>-7.444445</td>
+      <td>14.555555</td>
+      <td>0.479931</td>
+      <td>-2.029312</td>
+    </tr>
+  </tbody>
+</table>
+<p>2100 rows &#215; 19 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[72]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data_class</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Desktop\DePaul Winter\segmentation_data\segmentation_classes.txt&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">Data_class</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[72]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>GRASS</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>GRASS</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>GRASS</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>GRASS</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>GRASS</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>2095</td>
+      <td>CEMENT</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>2096</td>
+      <td>CEMENT</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>2097</td>
+      <td>CEMENT</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>2098</td>
+      <td>CEMENT</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>2099</td>
+      <td>CEMENT</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+<p>2100 rows &#215; 2 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data_name</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;C:\Users\Milin Desai\Desktop\DePaul Winter\segmentation_data\segmentation_names.txt&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">Data_name</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[14]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>REGION-CENTROID-COL</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>REGION-CENTROID-ROW</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>REGION-PIXEL-COUNT</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>SHORT-LINE-DENSITY-5</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>SHORT-LINE-DENSITY-2</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>VEDGE-MEAN</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>VEDGE-SD</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>HEDGE-MEAN</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>HEDGE-SD</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>INTENSITY-MEAN</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>RAWRED-MEAN</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>RAWBLUE-MEAN</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>RAWGREEN-MEAN</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>EXRED-MEAN</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>EXBLUE-MEAN</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>EXGREEN-MEAN</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>VALUE-MEAN</td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td>SATURATION-MEAN</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td>HUE-MEAN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Q-1 A)<a rel="noopener" class="anchor-link" href="#Q-1-A)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span>
+<span class="n">Data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[24]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[110.        , 189.        ,   9.        , ...,  18.666668  ,
+          0.50813884,   1.9108642 ],
+       [ 86.        , 187.        ,   9.        , ...,  19.222221  ,
+          0.46332908,   1.9414649 ],
+       [225.        , 244.        ,   9.        , ...,  17.11111   ,
+          0.48014903,   1.9879022 ],
+       ...,
+       [128.        , 161.        ,   9.        , ...,  10.888889  ,
+          0.5409177 ,  -1.9963073 ],
+       [150.        , 158.        ,   9.        , ...,  12.222222  ,
+          0.50308645,  -1.9434487 ],
+       [124.        , 162.        ,   9.        , ...,  14.555555  ,
+          0.4799313 ,  -2.0293121 ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data_name</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Data_name</span><span class="p">)</span>
+<span class="n">Data_name</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[&#39;REGION-CENTROID-COL&#39;],
+       [&#39;REGION-CENTROID-ROW&#39;],
+       [&#39;REGION-PIXEL-COUNT&#39;],
+       [&#39;SHORT-LINE-DENSITY-5&#39;],
+       [&#39;SHORT-LINE-DENSITY-2&#39;],
+       [&#39;VEDGE-MEAN&#39;],
+       [&#39;VEDGE-SD&#39;],
+       [&#39;HEDGE-MEAN&#39;],
+       [&#39;HEDGE-SD&#39;],
+       [&#39;INTENSITY-MEAN&#39;],
+       [&#39;RAWRED-MEAN&#39;],
+       [&#39;RAWBLUE-MEAN&#39;],
+       [&#39;RAWGREEN-MEAN&#39;],
+       [&#39;EXRED-MEAN&#39;],
+       [&#39;EXBLUE-MEAN&#39;],
+       [&#39;EXGREEN-MEAN&#39;],
+       [&#39;VALUE-MEAN&#39;],
+       [&#39;SATURATION-MEAN&#39;],
+       [&#39;HUE-MEAN&#39;]], dtype=object)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Data_class</span><span class="p">)</span>
+<span class="n">Data_class</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[18]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[&#39;GRASS&#39;, 0],
+       [&#39;GRASS&#39;, 0],
+       [&#39;GRASS&#39;, 0],
+       ...,
+       [&#39;CEMENT&#39;, 3],
+       [&#39;CEMENT&#39;, 3],
+       [&#39;CEMENT&#39;, 3]], dtype=object)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">preprocessing</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">scaling</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">MinMaxScaler</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data_1</span> <span class="o">=</span> <span class="n">scaling</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data_1</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[35]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[0.43, 0.74, 0.  , ..., 0.12, 0.51, 0.83],
+       [0.34, 0.73, 0.  , ..., 0.13, 0.46, 0.84],
+       [0.89, 0.97, 0.  , ..., 0.11, 0.48, 0.84],
+       ...,
+       [0.5 , 0.62, 0.  , ..., 0.07, 0.54, 0.18],
+       [0.59, 0.61, 0.  , ..., 0.08, 0.5 , 0.18],
+       [0.49, 0.63, 0.  , ..., 0.1 , 0.48, 0.17]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Q-1 B) Clustering Data<a rel="noopener" class="anchor-link" href="#Q-1-B)-Clustering-Data">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># initialization</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Data_1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 385.14488125237534
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 360.6303471838679
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 355.25020376798375
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 352.15638775028094
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 351.0420522739411
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 350.423234394236
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 350.1446625128219
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 350.03476808677726
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 350.0128073878835
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 350.0115747924538
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 350.0115747924538
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 418.2517518936288
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 397.82393151157663
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 378.47437125622037
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 368.9104575676092
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 368.3317898966916
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 368.12775886645926
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 367.7400560955062
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 367.13778875242957
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 366.6562377984045
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 366.4941807895845
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 366.48478631537176
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 366.48478631537176
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 395.5490971220828
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 382.577502673554
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 376.8044695387231
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 373.94079263420525
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 373.1752699916245
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 372.59820826487373
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 371.739189961453
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 371.1485946375286
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 370.54005294951736
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 369.99539583022926
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 369.895561025191
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 369.86528266029626
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 369.85888642081807
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 369.85888642081807
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 386.30208516415496
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 361.5092069077893
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 355.5055745152103
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 352.57340450806396
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 351.9211480095472
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 351.6069974222886
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 351.39431537196344
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 351.304028967777
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 351.2842465108393
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 351.24851849473305
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 351.1944877044988
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 351.0404533900548
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 350.719348184994
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 350.22648886074603
+start iteration
+done sorting
+end inner loop
+Iteration 14, inertia 350.05803966949475
+start iteration
+done sorting
+end inner loop
+Iteration 15, inertia 350.03002648093286
+start iteration
+done sorting
+end inner loop
+Iteration 16, inertia 350.025041469862
+start iteration
+done sorting
+end inner loop
+Iteration 17, inertia 350.0173541333279
+start iteration
+done sorting
+end inner loop
+Iteration 18, inertia 350.0129027194548
+start iteration
+done sorting
+end inner loop
+Iteration 19, inertia 350.0129027194548
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 406.3486752820206
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 377.672533189796
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 370.7729142496352
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 367.8777209445598
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 366.32215604594126
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 365.98554189435436
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 365.85919739663495
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 365.7608718441468
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 365.5862852854542
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 365.3104629707508
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 365.0202453486091
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 364.26582627749224
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 362.4509421086148
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 357.33751559291056
+start iteration
+done sorting
+end inner loop
+Iteration 14, inertia 353.91362660947885
+start iteration
+done sorting
+end inner loop
+Iteration 15, inertia 351.63676986595954
+start iteration
+done sorting
+end inner loop
+Iteration 16, inertia 350.697876982715
+start iteration
+done sorting
+end inner loop
+Iteration 17, inertia 350.2458357929351
+start iteration
+done sorting
+end inner loop
+Iteration 18, inertia 350.0902784495385
+start iteration
+done sorting
+end inner loop
+Iteration 19, inertia 350.04607894731697
+start iteration
+done sorting
+end inner loop
+Iteration 20, inertia 350.0129027194548
+start iteration
+done sorting
+end inner loop
+Iteration 21, inertia 350.0129027194548
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 390.10384278636457
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 376.7413232353062
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 375.34098640292655
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 374.92431429141897
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 374.5721043273733
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 374.4492867439044
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 374.276697434412
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 374.14352105641024
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 374.0798913005998
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 374.04677770247395
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 374.0166211693497
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 373.9743386449554
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 373.9475257780663
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 373.9152161740452
+start iteration
+done sorting
+end inner loop
+Iteration 14, inertia 373.9152161740452
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 409.22561907798195
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 376.18549701850793
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 371.56011956165776
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 370.31506054157535
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 369.87776944960234
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 369.7404531299926
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 369.68685372148354
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 369.6507744876487
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 369.64551527060576
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 369.6234248078988
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 369.59460840482313
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 369.54723157433165
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 369.49979883241554
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 369.4797886607543
+start iteration
+done sorting
+end inner loop
+Iteration 14, inertia 369.4595022319056
+start iteration
+done sorting
+end inner loop
+Iteration 15, inertia 369.4343255023841
+start iteration
+done sorting
+end inner loop
+Iteration 16, inertia 369.4329854359984
+center shift 1.782932e-03 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 401.85607092382486
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 377.89214093996253
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 354.4678475733808
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 350.6583150879453
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 350.21866093039233
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 350.08244013153626
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 350.0447510203161
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 350.0115747924538
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 350.0115747924538
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 411.83643667240847
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 386.93613852092574
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 377.02883670023886
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 374.0872488800154
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 372.1789821245826
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 370.8429617405885
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 369.71293500812345
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 368.7841137384746
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 367.40976809274736
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 365.3135951288217
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 362.1664682661983
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 358.816871439462
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 355.9276261175285
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 354.196014593179
+start iteration
+done sorting
+end inner loop
+Iteration 14, inertia 353.41657771943596
+start iteration
+done sorting
+end inner loop
+Iteration 15, inertia 352.3695038653474
+start iteration
+done sorting
+end inner loop
+Iteration 16, inertia 351.5035572853268
+start iteration
+done sorting
+end inner loop
+Iteration 17, inertia 351.3007619605151
+start iteration
+done sorting
+end inner loop
+Iteration 18, inertia 351.17652770193513
+start iteration
+done sorting
+end inner loop
+Iteration 19, inertia 350.9073448340723
+start iteration
+done sorting
+end inner loop
+Iteration 20, inertia 350.5167941483062
+start iteration
+done sorting
+end inner loop
+Iteration 21, inertia 350.11574263159423
+start iteration
+done sorting
+end inner loop
+Iteration 22, inertia 350.04512510346035
+start iteration
+done sorting
+end inner loop
+Iteration 23, inertia 350.025041469862
+start iteration
+done sorting
+end inner loop
+Iteration 24, inertia 350.0173541333279
+start iteration
+done sorting
+end inner loop
+Iteration 25, inertia 350.0129027194548
+start iteration
+done sorting
+end inner loop
+Iteration 26, inertia 350.0129027194548
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 398.78849578790516
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 373.1466560831333
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 361.2457779170241
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 355.71689300470064
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 354.32336020772004
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 352.98091295440827
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 351.96451018026175
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 351.2796981673303
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 350.84865552435946
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 350.30140124123017
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 350.0434651658587
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 350.025041469862
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 350.0173541333279
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 350.0129027194548
+start iteration
+done sorting
+end inner loop
+Iteration 14, inertia 350.0129027194548
+center shift 0.000000e+00 within tolerance 4.150157e-06
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[38]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>KMeans(algorithm=&#39;auto&#39;, copy_x=True, init=&#39;k-means++&#39;, max_iter=500,
+       n_clusters=7, n_init=10, n_jobs=None, precompute_distances=&#39;auto&#39;,
+       random_state=None, tol=0.0001, verbose=1)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[39]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">clusters</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Data_1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[40]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Cluster&quot;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[40]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Cluster</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>2095</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <td>2096</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>2097</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2098</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>2099</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+<p>2100 rows &#215; 1 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:,.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span>
+
+<span class="n">data_centroids_</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">kmeans</span><span class="o">.</span><span class="n">cluster_centers_</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">Data_name</span><span class="p">)</span>
+<span class="n">data_centroids_</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[42]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>(REGION-CENTROID-COL,)</th>
+      <th>(REGION-CENTROID-ROW,)</th>
+      <th>(REGION-PIXEL-COUNT,)</th>
+      <th>(SHORT-LINE-DENSITY-5,)</th>
+      <th>(SHORT-LINE-DENSITY-2,)</th>
+      <th>(VEDGE-MEAN,)</th>
+      <th>(VEDGE-SD,)</th>
+      <th>(HEDGE-MEAN,)</th>
+      <th>(HEDGE-SD,)</th>
+      <th>(INTENSITY-MEAN,)</th>
+      <th>(RAWRED-MEAN,)</th>
+      <th>(RAWBLUE-MEAN,)</th>
+      <th>(RAWGREEN-MEAN,)</th>
+      <th>(EXRED-MEAN,)</th>
+      <th>(EXBLUE-MEAN,)</th>
+      <th>(EXGREEN-MEAN,)</th>
+      <th>(VALUE-MEAN,)</th>
+      <th>(SATURATION-MEAN,)</th>
+      <th>(HUE-MEAN,)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.30</td>
+      <td>0.53</td>
+      <td>0.00</td>
+      <td>0.05</td>
+      <td>0.05</td>
+      <td>0.10</td>
+      <td>0.01</td>
+      <td>0.08</td>
+      <td>0.01</td>
+      <td>0.40</td>
+      <td>0.37</td>
+      <td>0.47</td>
+      <td>0.35</td>
+      <td>0.50</td>
+      <td>0.57</td>
+      <td>0.21</td>
+      <td>0.47</td>
+      <td>0.30</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.77</td>
+      <td>0.43</td>
+      <td>0.00</td>
+      <td>0.01</td>
+      <td>0.02</td>
+      <td>0.04</td>
+      <td>0.00</td>
+      <td>0.02</td>
+      <td>0.00</td>
+      <td>0.04</td>
+      <td>0.03</td>
+      <td>0.06</td>
+      <td>0.03</td>
+      <td>0.78</td>
+      <td>0.22</td>
+      <td>0.49</td>
+      <td>0.06</td>
+      <td>0.54</td>
+      <td>0.24</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.25</td>
+      <td>0.39</td>
+      <td>0.00</td>
+      <td>0.08</td>
+      <td>0.02</td>
+      <td>0.08</td>
+      <td>0.00</td>
+      <td>0.06</td>
+      <td>0.01</td>
+      <td>0.15</td>
+      <td>0.14</td>
+      <td>0.18</td>
+      <td>0.12</td>
+      <td>0.72</td>
+      <td>0.34</td>
+      <td>0.35</td>
+      <td>0.18</td>
+      <td>0.41</td>
+      <td>0.20</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0.51</td>
+      <td>0.81</td>
+      <td>0.00</td>
+      <td>0.08</td>
+      <td>0.01</td>
+      <td>0.05</td>
+      <td>0.00</td>
+      <td>0.05</td>
+      <td>0.00</td>
+      <td>0.11</td>
+      <td>0.09</td>
+      <td>0.09</td>
+      <td>0.14</td>
+      <td>0.68</td>
+      <td>0.08</td>
+      <td>0.82</td>
+      <td>0.13</td>
+      <td>0.41</td>
+      <td>0.89</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.54</td>
+      <td>0.15</td>
+      <td>0.00</td>
+      <td>0.03</td>
+      <td>0.00</td>
+      <td>0.03</td>
+      <td>0.00</td>
+      <td>0.03</td>
+      <td>0.00</td>
+      <td>0.82</td>
+      <td>0.78</td>
+      <td>0.89</td>
+      <td>0.79</td>
+      <td>0.27</td>
+      <td>0.67</td>
+      <td>0.29</td>
+      <td>0.89</td>
+      <td>0.21</td>
+      <td>0.13</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>0.75</td>
+      <td>0.53</td>
+      <td>0.00</td>
+      <td>0.04</td>
+      <td>0.04</td>
+      <td>0.11</td>
+      <td>0.02</td>
+      <td>0.11</td>
+      <td>0.02</td>
+      <td>0.30</td>
+      <td>0.28</td>
+      <td>0.35</td>
+      <td>0.26</td>
+      <td>0.59</td>
+      <td>0.45</td>
+      <td>0.31</td>
+      <td>0.35</td>
+      <td>0.30</td>
+      <td>0.16</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>0.25</td>
+      <td>0.46</td>
+      <td>0.00</td>
+      <td>0.03</td>
+      <td>0.01</td>
+      <td>0.04</td>
+      <td>0.00</td>
+      <td>0.03</td>
+      <td>0.00</td>
+      <td>0.03</td>
+      <td>0.02</td>
+      <td>0.04</td>
+      <td>0.02</td>
+      <td>0.77</td>
+      <td>0.22</td>
+      <td>0.51</td>
+      <td>0.04</td>
+      <td>0.80</td>
+      <td>0.18</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">metrics</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">silhouettes</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">silhouette_samples</span><span class="p">(</span><span class="n">Data</span><span class="p">,</span> <span class="n">clusters</span><span class="p">)</span><span class="err">​</span><span class="n">silhouettes</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">silhouette_samples</span><span class="p">(</span><span class="n">Data</span><span class="p">,</span> <span class="n">clusters</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">silhouettes</span><span class="p">[:</span><span class="mi">20</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">silhouettes</span><span class="p">[:</span><span class="mi">20</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0.57 0.56 0.47 0.5  0.57 0.56 0.54 0.41 0.52 0.47 0.49 0.49 0.58 0.56 0.38 0.53 0.55 0.42 0.42 0.4 ]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[45]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">silhouettes</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.33207429088941987
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[46]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plot_silhouettes</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">clusters</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">):</span>
+    
+    <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">cm</span>
+    <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">silhouette_samples</span>
+
+    <span class="n">cluster_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">n_clusters</span> <span class="o">=</span> <span class="n">cluster_labels</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">silhouette_vals</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">silhouette_samples</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">clusters</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
+    <span class="n">c_ax_lower</span><span class="p">,</span> <span class="n">c_ax_upper</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">cticks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cluster_labels</span><span class="p">):</span>
+        <span class="n">c_silhouette_vals</span> <span class="o">=</span> <span class="n">silhouette_vals</span><span class="p">[</span><span class="n">clusters</span> <span class="o">==</span> <span class="n">k</span><span class="p">]</span>
+        <span class="n">c_silhouette_vals</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">c_ax_upper</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">c_silhouette_vals</span><span class="p">)</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">jet</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_clusters</span><span class="p">)</span>
+        <span class="n">pl</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">c_ax_lower</span><span class="p">,</span> <span class="n">c_ax_upper</span><span class="p">),</span> <span class="n">c_silhouette_vals</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> 
+                      <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+
+        <span class="n">cticks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">c_ax_lower</span> <span class="o">+</span> <span class="n">c_ax_upper</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">c_ax_lower</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">c_silhouette_vals</span><span class="p">)</span>
+    
+    <span class="n">silhouette_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">silhouette_vals</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">silhouette_avg</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span> 
+
+    <span class="n">pl</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">cticks</span><span class="p">,</span> <span class="n">cluster_labels</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Cluster&#39;</span><span class="p">)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Silhouette coefficient&#39;</span><span class="p">)</span>
+
+    <span class="n">pl</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="c1">#pl.savefig(&#39;images/11_04.png&#39;, dpi=300)</span>
+    <span class="n">pl</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    
+    <span class="k">return</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">plot_silhouettes</span><span class="p">(</span><span class="n">Data</span><span class="p">,</span> <span class="n">clusters</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea">
+<img src="javascript://"/>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data_kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># initialization</span>
+<span class="n">Data_kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 404.3113031196424
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 379.4451036978588
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 375.92850701082494
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 374.8527353736211
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 374.64101730349523
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 374.5853903162507
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 374.5585665349903
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 374.53793237024365
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 374.5178307716084
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 374.51453424870346
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 374.51453424870346
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 378.2965677345988
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 369.258240400016
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 368.870819743174
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 368.82534413473826
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 368.8159206228592
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 368.8117454209989
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 368.8117454209989
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 367.59105686871897
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 357.63780763764987
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 354.3435539730913
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 351.868148685331
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 350.6357391935365
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 350.2422008596784
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 350.09078346400406
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 350.047083312248
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 350.0142970109002
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 350.0129027194548
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 350.0129027194548
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 370.71465599151554
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 352.17302367782975
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 350.45986769924417
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 350.1668776112279
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 350.04662377170047
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 350.01539581225586
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 350.01539581225586
+center shift 0.000000e+00 within tolerance 4.150157e-06
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 446.1623976722902
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 397.9885816619449
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 390.6232533057104
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 388.79017681302196
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 388.0328312049411
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 387.59433166283037
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 387.358569739265
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 387.1345528004998
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 386.8706765641059
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 385.72842007757515
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 382.05331688579525
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 377.56794829959904
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 373.6488209142507
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 371.09673642512575
+start iteration
+done sorting
+end inner loop
+Iteration 14, inertia 370.0988564565233
+start iteration
+done sorting
+end inner loop
+Iteration 15, inertia 369.9999242473947
+start iteration
+done sorting
+end inner loop
+Iteration 16, inertia 369.990083267301
+start iteration
+done sorting
+end inner loop
+Iteration 17, inertia 369.98780951737695
+start iteration
+done sorting
+end inner loop
+Iteration 18, inertia 369.9851522502859
+start iteration
+done sorting
+end inner loop
+Iteration 19, inertia 369.98193681982264
+start iteration
+done sorting
+end inner loop
+Iteration 20, inertia 369.98193681982264
+center shift 0.000000e+00 within tolerance 4.150157e-06
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[48]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>KMeans(algorithm=&#39;auto&#39;, copy_x=True, init=&#39;k-means++&#39;, max_iter=500,
+       n_clusters=7, n_init=5, n_jobs=None, precompute_distances=&#39;auto&#39;,
+       random_state=None, tol=0.0001, verbose=1)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[56]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Pred</span> <span class="o">=</span> <span class="n">Data_kmeans</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[58]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">completeness_score</span><span class="p">,</span> <span class="n">homogeneity_score</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[73]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">Data_class_2</span> <span class="o">=</span> <span class="n">Data_class</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">Data_class_2</span>
+<span class="c1">#Data_class = np.array(Data_class)</span>
+<span class="c1">#Data_class.shape</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[73]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>0       0
+1       0
+2       0
+3       0
+4       0
+       ..
+2095    3
+2096    3
+2097    3
+2098    3
+2099    3
+Name: 1, Length: 2100, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[74]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">completeness_score</span><span class="p">(</span><span class="n">Data_class_2</span><span class="p">,</span><span class="n">clusters</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6117374684331665
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[75]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">homogeneity_score</span><span class="p">(</span><span class="n">Data_class_2</span><span class="p">,</span><span class="n">clusters</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.6100499914689614
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Q-1 C)<a rel="noopener" class="anchor-link" href="#Q-1-C)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[81]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">decomposition</span> 
+<span class="n">analysis</span> <span class="o">=</span> <span class="n">decomposition</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">RDS</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0.61 0.13]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[79]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">decomposition</span> 
+<span class="n">analysis</span> <span class="o">=</span> <span class="n">decomposition</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">RDS</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0.61 0.13 0.1 ]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[82]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">decomposition</span> 
+<span class="n">analysis</span> <span class="o">=</span> <span class="n">decomposition</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">RDS</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">Data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">analysis</span><span class="o">.</span><span class="n">explained_variance_ratio_</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0.61 0.13 0.1  0.05]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[83]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">RDS</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[83]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[-0.69,  0.53,  0.25, -0.2 ],
+       [-0.67,  0.51,  0.34, -0.17],
+       [-0.71,  0.77, -0.16, -0.01],
+       ...,
+       [-0.51, -0.13, -0.08,  0.1 ],
+       [-0.48, -0.09, -0.16,  0.11],
+       [-0.44, -0.11, -0.05,  0.15]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[85]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="n">RDS</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;^&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Principal Component Number&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Percentage of Variance&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea">
+<img src="javascript://"/>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[90]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># initialization</span>
+<span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">RDS</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 204.36614208955018
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 179.97887340017286
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 177.06027836422155
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 176.8259014013768
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 176.79440924016723
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 176.79059105625646
+center shift 2.038162e-03 within tolerance 1.746170e-05
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 195.41767088345296
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 179.77927819315204
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 177.1210373239736
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 176.82379465437975
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 176.7990217504773
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 176.7925967446894
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 176.7925967446894
+center shift 0.000000e+00 within tolerance 1.746170e-05
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 215.97563494325706
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 209.0547749997022
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 206.96799034954702
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 206.3266966543475
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 206.06191887054777
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 205.10473317385828
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 203.60452718396596
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 202.93869606789048
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 202.73944312783985
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 202.54786857454627
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 202.40252861782497
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 202.328783300641
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 202.309745688229
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 202.28702850511124
+start iteration
+done sorting
+end inner loop
+Iteration 14, inertia 202.28217002690772
+start iteration
+done sorting
+end inner loop
+Iteration 15, inertia 202.28019104293446
+center shift 2.666709e-03 within tolerance 1.746170e-05
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 223.7568252330852
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 207.90131792448926
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 200.04086124191284
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 189.07223233056067
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 185.3567617870354
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 184.33542742227502
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 184.06005407411237
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 184.02861799093148
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 184.01736249426926
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 184.0137762289519
+center shift 2.959608e-03 within tolerance 1.746170e-05
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 199.91320465329642
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 186.55602601073895
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 185.00867680326485
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 184.55012855655292
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 184.31131162472255
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 184.12919024420964
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 184.0566829726033
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 184.0281367777565
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 184.02466252495307
+center shift 2.629134e-03 within tolerance 1.746170e-05
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 212.3163180101535
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 201.23095615262224
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 195.06301581348222
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 192.9722932339263
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 192.71418166814468
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 192.6856690773911
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 192.68297548178248
+center shift 1.898877e-03 within tolerance 1.746170e-05
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 210.52494498248336
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 201.66670234476484
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 200.0397545064596
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 197.15300540652402
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 192.10952503596465
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 186.03065016828353
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 184.43269053177238
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 184.1311588749735
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 184.0308515504506
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 184.0179008076977
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 184.01222694058097
+center shift 4.167372e-03 within tolerance 1.746170e-05
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 226.65265680783926
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 214.37820173616132
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 204.8438913524503
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 198.55539235172864
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 193.74670603337654
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 190.96778869531278
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 188.771293164236
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 187.76055977939288
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 187.25822671124004
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 186.97143202922942
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 186.94942341751806
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 186.94259600801874
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 186.9399589575631
+center shift 3.384872e-03 within tolerance 1.746170e-05
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 206.42949000527264
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 188.87843039267344
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 181.1934422254333
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 178.3347286914331
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 177.13962459569592
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 176.84192816215307
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 176.82017756410656
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 176.80525014014125
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 176.79203083660622
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 176.79203083660622
+center shift 0.000000e+00 within tolerance 1.746170e-05
+Initialization complete
+start iteration
+done sorting
+end inner loop
+Iteration 0, inertia 226.55688287255424
+start iteration
+done sorting
+end inner loop
+Iteration 1, inertia 214.19042716382972
+start iteration
+done sorting
+end inner loop
+Iteration 2, inertia 210.4048726519708
+start iteration
+done sorting
+end inner loop
+Iteration 3, inertia 209.14586905832482
+start iteration
+done sorting
+end inner loop
+Iteration 4, inertia 207.72590279315443
+start iteration
+done sorting
+end inner loop
+Iteration 5, inertia 205.7961634532125
+start iteration
+done sorting
+end inner loop
+Iteration 6, inertia 203.75260997139904
+start iteration
+done sorting
+end inner loop
+Iteration 7, inertia 199.45646151000798
+start iteration
+done sorting
+end inner loop
+Iteration 8, inertia 196.98463096689804
+start iteration
+done sorting
+end inner loop
+Iteration 9, inertia 195.63281480608006
+start iteration
+done sorting
+end inner loop
+Iteration 10, inertia 194.73784507820685
+start iteration
+done sorting
+end inner loop
+Iteration 11, inertia 194.14008332687996
+start iteration
+done sorting
+end inner loop
+Iteration 12, inertia 193.83477761014913
+start iteration
+done sorting
+end inner loop
+Iteration 13, inertia 193.70683323507362
+start iteration
+done sorting
+end inner loop
+Iteration 14, inertia 193.65691567896056
+start iteration
+done sorting
+end inner loop
+Iteration 15, inertia 193.62008908679738
+start iteration
+done sorting
+end inner loop
+Iteration 16, inertia 193.60413365394132
+start iteration
+done sorting
+end inner loop
+Iteration 17, inertia 193.59880190712025
+center shift 3.722195e-03 within tolerance 1.746170e-05
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[90]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>KMeans(algorithm=&#39;auto&#39;, copy_x=True, init=&#39;k-means++&#39;, max_iter=500,
+       n_clusters=7, n_init=10, n_jobs=None, precompute_distances=&#39;auto&#39;,
+       random_state=None, tol=0.0001, verbose=1)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[91]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">clusters</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">RDS</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Cluster&quot;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[91]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Cluster</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>2095</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>2096</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>2097</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>2098</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>2099</td>
+      <td>6</td>
+    </tr>
+  </tbody>
+</table>
+<p>2100 rows &#215; 1 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[94]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">completeness_score</span><span class="p">(</span><span class="n">Data_class_2</span><span class="p">,</span><span class="n">clusters</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.5982560579412508
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[95]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">homogeneity_score</span><span class="p">(</span><span class="n">Data_class_2</span><span class="p">,</span><span class="n">clusters</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>0.5969504587800466
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[96]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">silhouettes</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">silhouette_samples</span><span class="p">(</span><span class="n">Data</span><span class="p">,</span> <span class="n">clusters</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">silhouettes</span><span class="p">[:</span><span class="mi">20</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">silhouettes</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[0.55 0.53 0.46 0.46 0.54 0.55 0.51 0.39 0.49 0.44 0.46 0.46 0.57 0.53 0.37 0.5  0.54 0.39 0.42 0.4 ]
+0.32739241171986255
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[97]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">plot_silhouettes</span><span class="p">(</span><span class="n">Data</span><span class="p">,</span> <span class="n">clusters</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea">
+<img src="javascript://"/>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[&#160;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+
+
+ 
+
+
+
+<script type="text/javascript" src="/d2l/common/math/MathML.js?v=20.20.10.24951-324 "></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() { D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML','130'); });</script></body></html>
