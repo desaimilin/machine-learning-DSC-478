@@ -1,0 +1,948 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+
+  <div class="border-box-sizing">
+    <div class="container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Q-2 A)<a rel="noopener" class="anchor-link" href="#Q-2-A)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">linalg</span> <span class="k">as</span> <span class="n">la</span>
+<span class="kn">import</span> <span class="nn">pdb</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">metrics</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[109]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">joke_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\Users\Milin Desai\Desktop\jokes/modified_jester_data.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">joke_data1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\Users\Milin Desai\Desktop\jokes/jokes.csv&quot;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[113]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">joke_data1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">joke_data1</span><span class="p">)</span>
+<span class="n">joke_data1</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[113]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[&#39;A man visits the doctor. The doctor says &quot;I have bad news for you.You have cancer and Alzheimer\&#39;s disease&quot;. The man replies &quot;Well thank God I don\&#39;t have cancer!&quot;&#39;],
+       [&#39;This couple had an excellent relationship going until one day he came home from work to find his girlfriend packing. He asked her why she was leaving him and she told him that she had heard awful things about him. &quot;What could they possibly have said to make you move out?&quot; &quot;They told me that you were a pedophile.&quot; He replied &quot;That\&#39;s an awfully big word for a ten year old.&quot; &#39;],
+       [&quot;Q. What&#39;s 200 feet long and has 4 teeth? A. The front row at a Willie Nelson Concert.&quot;],
+       [&quot;Q. What&#39;s the difference between a man and a toilet? A. A toilet doesn&#39;t follow you around after you use it.&quot;],
+       [&quot;Q. What&#39;s O. J. Simpson&#39;s Internet address? A.\tSlash slash backslash slash slash escape.&quot;],
+       [&quot;Bill &amp; Hillary are on a trip back to Arkansas. They&#39;re almost out of gas so Bill pulls into a service station on the outskirts of town. The attendant runs out of the station to serve them when Hillary realizes it&#39;s an old boyfriend from high school. She and the attendant chat as he gases up their car and cleans the windows. Then they all say good-bye. As Bill pulls the car onto the road he turns to Hillary and says &#39;Now aren&#39;t you glad you married me and not him ? You could&#39;ve been the wife of a grease monkey !&#39; To which Hillary replied &#39;No Bill. If I would have married him you&#39;d be pumping gas and he would be the President !&#39; &quot;],
+       [&quot;How many feminists does it take to screw in a light bulb?That&#39;s not funny.&quot;],
+       [&#39;Q. Did you hear about the dyslexic devil worshipper? A. He sold his soul to Santa.&#39;],
+       [&#39;A country guy goes into a city bar that has a dress code and the maitred\&#39; demands he wear a tie. Discouraged the guy goes to his car to sulk when inspiration strikes: He\&#39;s got jumper cables in the trunk! So he wraps them around his neck sort of like a string tie (a bulky string tie to be sure) and returns to the bar. The maitre d\&#39; is reluctant but says to the guy &quot;Okay you\&#39;re a pretty resourceful fellow you can come in... but just don\&#39;t start anything&quot;!  &#39;],
+       [&#39;Two cannibals are eating a clown one turns to other and says: &quot;Does this taste funny to you? &#39;],
+       [&quot;Q. What do a hurricane a tornado and a redneck divorce all have in common? A. Someone&#39;s going to lose their trailer...&quot;],
+       [&#39;A guy stood over his tee shot for what seemed an eternity looking up looking down measuring the distance figuring the wind direction and speed. Driving his partner nuts.Finally his exasperated partner says &quot;What the hell is taking so long? Hit the goddamn ball!&quot;The guy answers &quot;My wife is up there watching me from the clubhouse. I want to make this a perfect shot.&quot;&quot;Well hell man you don\&#39;t stand a snowball\&#39;s chance in hell of hitting her from here!&quot; &#39;],
+       [&#39;They asked the Japanese visitor if they have elections in his country.  &quot;Every Morning&quot; he answers.&#39;],
+       [&#39;The father was very anxious to marry off his only daughter so he wanted to impress her date. &quot;Do  you like to screw&quot; he says. &quot;Huh&quot; replied the surprised first date. &quot;My daughter she loves to screw and she\&#39;s good at it you and her  should go screw&quot; carefully explained the father. Now very interested the boy replied &quot;Yes sir.&quot; Minutes later the girl came down the stairs kissed her father goodbye and the couple left. After only a few minutes she reappeared furious dress torn hair a mess and screamed&quot;Dammit Daddy it\&#39;s the TWIST get it straight!&quot; &#39;],
+       [&#39;Q:  What did the blind person say when given some matzah?A:  Who the hell wrote this?&#39;],
+       [&#39;Q. What is orange and sounds like a parrot?  A. A carrot.&#39;],
+       [&#39;How many men does it take to screw in a light bulb? One...men will screw anything. &#39;],
+       [&#39;A dog walks into Western Union and asks the clerk to send a telegram. He fills out a form on which he writes down the telegram he wishes to send: &quot;Bow wow wow Bow wow wow.&quot;The clerk says &quot;You can add another \&#39;Bow wow\&#39; for the same price.&quot;The dog responded &quot;Now wouldn\&#39;t that sound a little silly?&quot; &#39;],
+       [&#39;Q: If a person who speaks three languages is called &quot;tri-lingual&quot; and a person who speaks two languages is called &quot;bi-lingual&quot; what do calla person who only speaks one language?A: American! &#39;],
+       [&quot;What&#39;s the difference between a MacIntosh and anEtch-A-Sketch? You don&#39;t have to shake the Mac to clear the screen. &quot;],
+       [&quot;What&#39;s the difference between a used tire and 365 used condoms?One&#39;s a Goodyear the other&#39;s a great year.&quot;],
+       [&#39;A duck walks into a pharmacy and asks for a condom. The pharmacist says&quot;Would you like me to stick that on your bill?&quot;The duck says: &quot;What kind of duck do you think I am!&quot;&#39;],
+       [&quot;Q: What is the Australian word for a boomerang that won&#39;t   come back? A: A stick&quot;],
+       [&#39;What do you get when you run over a parakeet with a lawnmower? Shredded tweet.&#39;],
+       [&#39;Two kindergarten girls were talking outside: one said &quot;You won\&#39;t believe what I saw on the patio yesterday--a condom!&quot;The second girl asked &quot;What\&#39;s a patio?&quot;&#39;],
+       [&#39;A guy walks into a bar and sits down next to an extremely gorgeous woman.  The first thing he notices about her though are her pants.  They were skin-tight high-waisted and had no obvious mechanism (zipper buttons or velcro) for opening them.After several minutes of puzzling over how she got the pants up over her hips he finally worked up the nerve to ask her.  &quot;Excuse me miss but how do you get into your pants?&quot;&quot;Well&quot; she replied &quot;you can start by buying me a drink.&quot;&#39;],
+       [&#39;Clinton returns from a vacation in Arkansas and walks down  the steps of Air Force One with two pigs under his arms.  At the bottom of the steps he says  to the honor guardsman &quot;These are genuineArkansas Razor-Back Hogs.  I got this one for Chelsea and this one forHillary.&quot;  The guardsman replies &quot;Nice trade Sir.&quot;&#39;],
+       [&#39;A mechanical electrical and a software engineer from Microsoft were driving through the desert when the car broke down. The mechanical engineer said &quot;It seems to be a problem with the fuel injection system why don\&#39;t we pop the hood and I\&#39;ll take a look at it.&quot; To which the electrical engineer replied &quot;No I think it\&#39;s just a loose ground wireI\&#39;ll get out and take a look.&quot; Then the Microsoft engineer jumps in.&quot;No no no. If we just close up all the windows get out wait a few minutes get back in and then reopen the windows everything will work fine.&quot;&#39;],
+       [&#39;An old Scotsmen is sitting with a younger Scottish gentleman and says the boy. &quot;Ah lad look out that window. You see that stone wall there I built it with me own bare hands placed every stone meself.  But do they call me MacGregor the wall builder? No! He Takes a few sips of his beer then says &quot;Aye and look out on that lake and eye that beautiful pier. I built it meself laid every board and hammered each nail but do they call me MacGregor the pier builder? No! He continues...&quot;And lad you see that road? That too I build with me own bare hands. Laid every inch of pavement meself but do they call MacGregor the roadbuilder? No!&quot;Again he returns to his beer for a few sips then says &quot;Agh but you screw one sheep...&quot;&#39;],
+       [&quot;Q: What&#39;s the difference between a Lawyer and a Plumber? A: A Plumber works to unclog the system.&quot;],
+       [&#39; President Clinton looks up from his desk in the Oval Office to see one of his aides nervously approach him.  &quot;What is it?&quot; exclaims the President. &quot;It\&#39;s this Abortion Bill Mr. President what do you want to do about it?&quot; the aide replies. &quot;Just go ahead and pay it.&quot; responds the President. &#39;],
+       [&#39;A man arrives at the gates of heaven. St. Peter asks &quot;Religion?&quot; The man says &quot;Methodist.&quot; St. Peter looks down his list and says &quot;Go to room 24 but be very quiet as you pass room 8.&quot; Another man arrives at the gates of heaven. &quot;Religion?&quot;&quot;Baptist.&quot; &quot;Go to room 18 but be very quiet as you pass room 8.&quot; A third man arrives at the gates. &quot;Religion?&quot; &quot;Jewish.&quot;&quot;Go to room 11 but be very quiet as you pass room 8.&quot; The man says &quot;I can understand there being different rooms for different religions but why must I be quiet when I pass room 8?&quot; St. Peter tells him &quot;Well the Catholics are in room 8 and they think they\&#39;re the only ones here.&#39;],
+       [&#39;What do you call an American in the finals of the world cup?&quot;Hey Beer Man!&quot;&#39;],
+       [&#39;Out in the backwoods of some midwestern state little Johnny arrives at school an hour late.Teacher: &quot;Why are you so late John? &quot;Johny : &quot;My big brother got shot in the ass.&quot;(the teacher corrects his speech)Teacher: &quot;Rectum.&quot;Johnny : &quot;Wrecked him!? Hell It damn near killed him!&quot; &#39;],
+       [&#39;An explorer in the deepest Amazon suddenly finds himself surrounded by a bloodthirsty group of natives. Upon surveying the situation he says quietly to himself &quot;Oh God I\&#39;m screwed.&quot; The sky darkens and a voice booms out &quot;No you are NOTscrewed. Pick up that stone at your feet and bash in the head of the chief standing in front of you.&quot; So with the stone he bashes the life out of the chief. Standing above the lifeless body breathing heavily looking at 100 angry natives... The voice booms out again &quot;Okay ..... NOW you\&#39;re screwed.&quot; &#39;],
+       [&#39;A guy walks into a bar orders a beer and says to the bartender&quot;Hey I got this great Polish Joke...&quot; The barkeep glares at him and says in a warning tone of voice:&quot;Before you go telling that joke you better know that I\&#39;m Polish both bouncers are Polish and so are most of my customers&quot;&quot;Okay&quot; says the customer&quot;I\&#39;ll tell it very slowly.&quot; &#39;],
+       [&#39;A Jewish young man was seeing a psychiatrist for an eating and sleeping disorder. &quot;I am so obsessed with my mother... As soon as I go to sleep I start dreaming and everyone in my dream turns into my mother. I wake up in such a state all I can do is go downstairs and eat a piece of toast.&quot;The psychiatrist replies:&quot;What just one piece of toast for a big boy like you?&quot;&#39;],
+       [&#39;May I take your order? the waiter asked. &quot;Yes how do you prepare your chickens?&quot; &quot;Nothing special sir&quot; he replied. &quot;We just tell them straight out that they\&#39;re going to die.&quot;&#39;],
+       [&#39;What is the difference between men and women:A woman wants one man to satisfy her every need.A man wants every woman to satisfy his one need.&#39;],
+       [&#39;How many Irishmen does it take to change a light bulb?Two one to hold the lightbulb and the other to drink until the room spins. &#39;],
+       [&#39;What does an atheist say during an orgasm?&quot;Oh Darwin! Oh Darwin!...&quot;&#39;],
+       [&#39;Two men are discussing the age old question: who enjoys sex more the man or the woman?  A woman walks by and listens in for awhile and then interrupts: &quot;Listen you guys. You know when your ear itches and you put in your little finger and wiggle it around for awhile?  Afterward which feels better your finger or your ear?&quot;&#39;],
+       [&#39;Arnold Swartzeneger and Sylvester Stallone are making a movie about the lives of the great composers.  Stallone says &quot;I want to be Mozart.&quot; Swartzeneger says: &quot;In that case...  I\&#39;ll be Bach.&quot;&#39;],
+       [&#39;A horse walks into a bar. Bartender says:&quot;So why the long face?&quot;&#39;],
+       [&#39;A boy comes home from school and tells his mother that he got a part in the school play.  &quot;What part?&quot; the mother asked. &quot;I play a Jewish husband&quot; the boy replied.  &quot;Go back to school and tell your teacher that you want a speaking role!&quot;&#39;],
+       [&#39;A couple has been married for 75 years. For the husband\&#39;s 95thbirthday his wife decides to surprise him by hiring a prostitute.That day the doorbell rings. The husband uses his walker to get to the door and opens it. A 21-year-old in a latex outfit smiles and says &quot;Hi I here to give you super sex!&quot; The old man says &quot;I\&#39;ll take the soup.&quot;&#39;],
+       [&#39;There was an engineer who had an exceptional gift for fixing all things mechanical.  After serving his company loyally for over 30 years he happily retired.  Several years later the company contacted him regarding a seemingly impossible problem they were having with one of their multi-million dollar machines. They had tried everything and everyone else to get the machine fixed but to no avail.  In desperation they called on the retired engineer who had solved so many of their problems in the past.The engineer reluctantly took the challenge.  He spent a day studying the huge machine.  At the end of the day he marked a small &quot;x&quot; in chalk on a particular component of the machine and proudly stated &quot;This is where your problem is&quot;.The part was replaced and the machine worked perfectly again. The company received a bill for $50000 from the engineer for his service.They demanded an itemized accounting of his charges. The engineer responded briefly:One chalk mark                       $1 Knowing where to put it            $49999It was paid in full and the engineer retired again in peace. &#39;],
+       [&#39;The graduate with a Science degree asks &quot;Why does it work?&quot;The graduate with an Engineering degree asks &quot;How does it work?&quot;The graduate with an Accounting degree Asks &quot;How much will it cost?&quot; The graduate with a  Liberal Arts degree asks &quot;Do you want fries with  that?&quot;&#39;],
+       [&#39;Three engineering students were gathered together discussing the possible designers of the human body.  One said &quot;It was a mechanical engineer. Just look at all the joints.&quot;  Another said &quot;No it was an electrical engineer.  The nervous systems many thousands of electrical connections.&quot;  The last said &quot;Actually it was a civil engineer. Who else would run a toxic waste pipeline through a recreational area?&quot;&#39;],
+       [&#39;A guy goes into confession and says to the priest &quot;Father I\&#39;m 80 years old widower with 11 grandchildren. Last night I met two beautiful flight attendants. They took me home and I made love to both of them. Twice.&quot;The priest said: &quot;Well my son when was the last time you were in confession?&quot; &quot;Never Father I\&#39;m Jewish.&quot; &quot;So then why are you telling me?&quot; &quot;I\&#39;m telling everybody.&quot;&#39;],
+       [&#39;Did you hear that Clinton has announced there is a new national bird?  The spread eagle.&#39;],
+       [&#39;Q: What do Monica Lewinsky and Bob Dole have in common?A: They were both upset when Bill finished first.&#39;],
+       [&#39;One Sunday morning William burst into the living room and said&quot;Dad! Mom! I have some great news for you! I am getting married to the most beautiful girl in town. She lives a block away and her name is Susan.&quot;After dinner William\&#39;s dad took him aside. &quot;Son I have to talk with you. Your mother and I have been married 30 years.. She\&#39;s a wonderful wife but she has never offered much excitement in the bedroom so I used to fool around with women a lot. Susan is actually your half-sister and I\&#39;m afraid you can\&#39;t marry her.&quot;William was heart-broken. After eight months he eventually started dating girls again. A year later he came home and very proudly announced &quot;Dianne said yes! We\&#39;re getting married inJune.&quot;Again his father insisted on another private conversation and broke the sad news. &quot;Dianne is your half-sister too William. I\&#39;m awfully sorry about this.&quot;William was furious! He finally decided to go to his mother with the news.&quot;Dad has done so much harm.. I guess I\&#39;m never going to get married&quot;  he complained. &quot;Every time I fall in love Dad tells me the girl is my half-sister.&quot;His mother just shook her head. &quot;Don\&#39;t pay any attention to what he says dear. He\&#39;s not really your father.&quot;&#39;],
+       [&#39;The Pope dies and naturally goes to heaven. He\&#39;s met by the reception committee and after a whirlwind tour he is told that he can enjoy any of the myriad of recreations available.He decides that he wants to read all of the ancient original text of theHoly Scriptures so he spends the next eon or so learning languages.After becoming a linguistic master he sits down in the library and begins to pour over every version of the Bible working back from most recent &quot;Easy Reading&quot; to the original script.All of a sudden there is a scream in the library. The Angels come running in only to find the Pope huddled in his chair crying to himself and muttering &quot;An \&#39;R\&#39;! The scribes left out the \&#39;R\&#39;.&quot; A particularly concerned Angel takes him aside offering comfort asks him what the problem is and what does he mean. After collecting his wits the Pope sobs again &quot;It\&#39;s the letter \&#39;R\&#39;. They left out the \&#39;R\&#39;.The word was supposed to be CELEBRATE!&quot;&#39;],
+       [&#39;A woman has twins and gives them up for adoption.  One of them goes to a family in Egypt and is named &quot;Amal.&quot;  The other goes to a  family in Spain; they name him &quot;Juan.&quot;  Years later Juan sends a picture of himself to his mom.  Upon receiving the picture she tells her husband that she wishes she also had a picture of Amal.  Her husband responds &quot;But they are twins-if you\&#39;ve seen Juan you\&#39;ve seen   Amal.&#39;],
+       [&#39;A man and Cindy Crawford get stranded on a desert island.  After a couple of days they fall in love and start sleeping together.  Time pass the man seems frustrated Cindy asks if there is anything she can do?  He says there is one thing &quot;Could you put on this baseball cap and go to the other side of the island and answer me when I call you Bob?&quot;  She agrees.  Next day he is walking on the other side of the island runs into her and says &quot;Hi Bob!&quot;  She says &quot;Hello what\&#39;s up?&quot;  He replies: &quot;Bob you won\&#39;t believe it: I\&#39;ve been sleeping with CindyCrawford for the past two weeks!!!!&quot;&#39;],
+       [&quot;Why are there so many Jones&#39;s in the phone book?Because they all have phones.&quot;],
+       [&#39;How many teddy bears does it take to change a lightbulb?It takes only one teddybear but it takes a whole lot of lightbulbs.&#39;],
+       [&#39;The Chukcha (Russian Eskimo) phones up the Russian Parliament Building.  A guard answers. Chukcha:  &quot;What is required to become Parliament member?&quot;Guard:  &quot;What are you an idiot?&quot;Chukcha:  &quot;Is it required?&quot;&#39;],
+       [&#39;What did the Buddhist say to the hot dog vendor?Make me one with everything.&#39;],
+       [&#39;During a recent publicity outing Hillary sneaked off to visit a fortune teller of some local repute.  In a dark and hazy room peering into a crystal ball the mystic delivered grave news.&quot;There\&#39;s no easy way to say this so I\&#39;ll just be blunt: Prepare yourself to be a widow.  Your husband will die a violent and horrible death this year.&quot;Visibly shaken Hillary stared at the woman\&#39;s lined face then at the single flickering candle then down at her hands.  She took a few deep breaths to compose herself.  She simply had to know.  She met the fortune teller\&#39;s gaze steadied her voice and asked her question.&quot;Will I be acquitted?&quot;&#39;],
+       [&#39;A group of  managers were given the assignment to measure the height of a flagpole. So they go out to the flagpole with ladders and tape measures and they\&#39;re falling off the ladders dropping the tape measures - the whole thing is just a mess.An engineer comes along and sees what they\&#39;re trying to do walks over pulls the flagpole out of the ground lays it flat measures it from end to end gives the measurement to one of the managers and walks away.After the engineer has gone one manager turns to another and laughs. &quot;Isn\&#39;t that just like an engineer we\&#39;re looking for the height and he gives us the length.&quot;&#39;],
+       [&#39;An engineer a physicist and a mathematician are sleeping in a room. There is a fire in the room. The engineer wakes up sees the firepicks up the bucket of water and douses the fire and goes back to sleep. Again there is fire in the room. This time the physicist wakes up notices the bucket fills it with water calculates the optimal trajectory and douses the fire in minimum amount of water and goes back to sleep. Again there is fire. This time the mathematician wakes up. He looks at the fire looks at the bucket and the water and exclaims &quot;A solution exists&quot; and goes back to sleep.&#39;],
+       [&#39;What is the rallying cry of the International Dyslexic Pride movement? Dyslexics Untie!&#39;],
+       [&#39;Two Rednecks were seated at the end of a bar when a young lady seated a few stools up began to choke on a piece of hamburger.  She was turning blue and obviously in serious respiratory distress.One said to the other &quot;That gal there is having a bad time!&quot; The other agreed and said &quot;Think we should go help?&quot;  &quot;You bet&quot; said the first and with that he ran over and said &quot;Can you breathe??&quot;  She shook her head no.  He said &quot;Can you speak??&quot;  She again shook her head no.With that he pulled up her skirt and licked her on the butt.She was so shocked she coughed up the obstruction and began to breathe-with great relief.The redneck walked back to his friend and said &quot;Funny how that hind lick maneuver always works.&quot;&#39;],
+       [&#39;A lawyer opened the door of his BMW when suddenly a car came along and hit the door ripping it off completely.  When the police arrived at the scene the lawyer was complaining bitterly about the damage to his precious BMW.  &quot;Officer look what they\&#39;ve done to my Beeeeemer!!!&quot; he whined.  &quot;You lawyers are so materialistic you make me sick!!!&quot;  retorted the officer.  &quot;You\&#39;re so worried about your stupid BMW that you didn\&#39;t even notice that your left arm was ripped off!!!&quot;  &quot;Oh my gaaaad...&quot; replied the lawyer finally noticing the bloody left shoulder where his arm once was.  &quot;Where\&#39;s myRolex???!!!!&quot;&#39;],
+       [&#39;Once upon a time two brooms fell in love and decided to get married.Before the ceremony the bride broom informed the groom broom that she was expecting a little whiskbroom. The groom broom was aghast!&quot;How is this possible?&quot; he asked. &quot;We\&#39;ve never swept together!&#39;],
+       [&#39;A man piloting a hot air balloon discovers he has wandered off course and is hopelessly lost. He descends to a lower altitude and locates a man down on the ground. He lowers the balloon further and shouts &quot;Excuse me can you tell me where I am?&quot;The man below says: &quot;Yes you\&#39;re in a hot air balloon about 30 feet above this field.&quot;&quot;You must work in Information Technology&quot; says the balloonist.&quot;Yes I do&quot; replies the man. &quot;And how did you know that?&quot;&quot;Well&quot; says the balloonist &quot;what you told me is technically correct but of no use to anyone.&quot;The man below says &quot;You must work in management.&quot;&quot;I do&quot; replies the balloonist &quot;how did you know?&quot;&quot;Well&quot; says the man &quot;you don\&#39;t know where you are or where you\&#39;re going but you expect my immediate help. You\&#39;re in the same position you were before we met but now it\&#39;s my fault!&quot;&#39;],
+       [&#39;This guys wife asks &quot;Honey if I died would you remarry?&quot; and he replies &quot;Well after a considerable period of grieving we all need companionship I guess I would.&quot;She then asks &quot;If I died and you remarried would she live in this house?&quot; and he replies &quot;We\&#39;ve spent a lot of time and money getting this house just the way we want it. I\&#39;m not going to get rid of my house I guess she would.&quot;&quot;If I died and you remarried and she lived in this house would she sleep in our bed?&quot; and he says &quot;That bed is brand new we just paid two thousand dollars for it it\&#39;s going to last a long time I guess she would.&quot;So she asks &quot;If I died and you remarried and she lived in this house and slept in our bed would she use my golf clubs?&quot;&quot;Oh no she\&#39;s left handed.&quot;&#39;],
+       [&#39;Employer to applicant: &quot;In this job we need someone who is responsible.&quot;Applicant: &quot;I\&#39;m the one you want. On my last job every time anything went wrong they said I was responsible.&quot;&#39;],
+       [&#39;At a recent Sacramento PC Users Group meeting a company was demonstrating its latest speech-recognition software.   A representative from the company was just about ready to start the demonstration and asked everyone in the room to quiet down.Just then someone in the back of the room yelled&quot;Format C: Return.&quot;Someone else chimed in:&quot;Yes Return&quot;Unfortunately the software worked.&#39;],
+       [&#39;On the first day of college the Dean addressed the students pointing out some of the rules:&quot;The female dormitory will be out-of-bounds for all male students and the male dormitory to the female students. Anybody caught breaking this rule will be fined $20 the first time.&quot; He continued &quot;Anybody caught breaking this rule the second time will be fined $60. Being caught a third time will cost you a fine of $180. Are there any questions ?&quot;At this point a male student in the crowd inquired:&quot;How much for a season pass ?&quot;&#39;],
+       [&quot;Q: What is the difference between George  Washington Richard Nixon and Bill Clinton? A: Washington couldn&#39;t tell a lie Nixon couldn&#39;t   tell the truth andClinton doesn&#39;t know the difference.&quot;],
+       [&#39;Q: How many stalkers does it take to change a light bulb?A: Two. One to replace the bulb and the other to watch it day and night.&#39;],
+       [&#39;Q: Do you know the difference between an intelligent male and theSasquatch? A: There have been actual reported sightings of the Sasquatch.&#39;],
+       [&quot;There once was a man and a woman that both  got in  a terrible car wreck. Both of their vehicles  were completely destroyed buy fortunately no one  was   hurt.  In thankfulness the woman said to the man &#39;We are both okay so we should celebrate. I have   a  bottle of wine in my car let&#39;s open it.&#39; So the woman got the bottle out of the car and  handed it to the man. The man took a really big drink and handed the woman the bottle. The  woman  closed the bottle and put it down. The man  asked  &#39;Aren&#39;t you going to take a drink?&#39; The woman cleverly replied &#39;No I think I&#39;ll  just  wait for the cops to get here.&#39;&quot;],
+       [&#39;If pro- is the opposite of con- then congress must be the opposite of progress.&#39;],
+       [&quot;Q: What&#39;s the difference between the government  and  the Mafia? A: One of them is organized.&quot;],
+       [&#39;Q: Ever wonder why the IRS calls it Form 1040?A: Because for every $50 that you earn you get 10 and they get 40.&#39;],
+       [&#39;Hillary Bill Clinton and the Pope are sitting together on an airplane. Bill says &quot;I could throw one thousand dollar bill out of this plane and make one person very happy.&quot;Hillary says &quot;I could throw 10 hundred dollar bills out of the plane and make 10 people very happy.&quot;The Pope chips in and says &quot;I could throw Bill out of the airplane and make the whole country happy.&quot;&#39;],
+       [&#39;An Asian man goes into a New York CityBank to exchange 10000 yen forAmerican Currency.  The teller gives him $72.00.  The next month theAsian man goes into the same bank with 10000 yen and receives $62.00.He asks &quot;How come? Only $62.00?&quot; The teller says &quot;Fluctuations-Fluctuations!&quot;Whereupon the Asian man looks back at the teller and says &quot;Fluk youAmelicans too!&quot;&#39;],
+       [&#39;Q: How do you keep a computer programmer in the shower all day long?A: Give them a shampoo with a label that says&quot;rinse lather repeat&quot;.&#39;],
+       [&#39;What a woman says:&quot;This place is a mess!  C\&#39;monYou and I need to clean upYour stuff is lying on the floor and you\&#39;ll have no clothes to wear if we don\&#39;t do laundry right now!&quot;What a man hears:blah blah blah blah C\&#39;mon blah blah blah blah you and I blah blah blah blah on the floor blah blah blah blah no clothes blah blah blah blah RIGHT NOW!&#39;],
+       [&#39;Q: What is the difference between Mechanical Engineers and Civil Engineers? A: Mechanical Engineers build weapons Civil Engineers build targets.&#39;],
+       [&#39;Q: How many Presidents does it take to screw in a light bulb?A: It depends upon your definition of screwing a light bulb.&#39;],
+       [&#39;A neutron walks into a bar and orders a drink.&quot;How much do I owe you?&quot; the neutron asks.The bartender replies &quot;for you no charge.&quot;&#39;],
+       [&#39;A man recently completing a routine physical examination receives a phone call from his doctor.  The doctor says &quot;I have some good news and some bad news.&quot;  The man says &quot;OK give me the good news first.&quot;  The doctor says &quot;The good news is you have 24 hours to live.&quot;  The man replies &quot;Shit!  That\&#39;s the good news?  Then what\&#39;s the bad news?&quot;The doctor says &quot;The bad news is I forgot to call you yesterday.&quot;&#39;],
+       [&#39;A Czechoslovakian man felt his eyesight was growing steadily worse and felt it was time to go see an optometrist. The doctor started with some simple testing and showed him a standard eye chart with letters of diminishing size: CRKBNWXSKZY. . . &quot;Can you read this?&quot; the doctor asked. &quot;Read it?&quot; the Czech answered. &quot;Doc I know him!&quot;&#39;],
+       [&quot;A radio conversation of a US naval ship with Canadian authorities ... Americans: Please divert your course 15 degrees to the North to avoid a collision.Canadians: Recommend you divert YOUR course 15 degrees to the South to avoid a collision.Americans: This is the Captain of a US Navy ship.  I say again divert YOUR course.Canadians: No.  I say again you divert YOUR course.Americans: This is the aircraft carrier USS LINCOLN the second largest ship in the United States&#39; Atlantic Fleet. We are accompanied by three destroyers three cruisers and numerous support vessels. I demand that you change your course 15 degrees north that&#39;s ONE FIVE DEGREES NORTH or counter-measures will be undertaken to ensure the safety of this ship.Canadians: This is a lighthouse.  Your call.&quot;],
+       [&quot;Q: How many programmers does it take to change a lightbulb?A: NONE!   That&#39;s a hardware problem....&quot;],
+       [&#39;A Panda bear walks into a bar.  Sits down at a table and orders a beer and a double cheeseburger.  After he is finished eating he pulls out a gun and rips the place with gunfire.  Patrons scatter and dive under chairs and tables as the bear runs out the door.  After ensuring that no one is hurt the bartender races out the door and calls after the bear &quot;What the hell did you do that for?&quot;  The bear calls back &quot;I\&#39;m a Panda bear.  Look it up in the dictionary.&quot;  The bartender returns pulls out his dictionary.panda : \\Pan&quot;da\\ n. (Zo[&quot;o]l.)A small Asiatic mammal (Ailurus fulgens) having fine soft fur.It is related to the bears and inhabits the mountains of Northern India.Eats shoots and leaves.&#39;],
+       [&#39;Early one morning a mother went to her sleeping son and woke him up.&quot;Wake up son.  It\&#39;s time to go to school.&quot; &quot;But why Mama?  I don\&#39;t want to go to school.&quot; &quot;Give me two reasons why you don\&#39;t want to go to school.&quot; &quot;One all the children hate me. Two all the teachers hate me&quot; &quot;Oh! that\&#39;s no reason. Come on you have to go to school&quot; &quot;Give me two good reasons WHY I should go to school?&quot;  &quot;One you are fifty-two years old. Two you are the principal of the school.&quot; &#39;],
+       [&#39;Reaching the end of a job interview the human resources person asked a young engineer fresh out of Stanford&quot;And what starting salary were you looking for?&quot;The engineer said &quot;In the neighborhood of $125000 a year depending on the benefits package.&quot;The interviewer said &quot;Well what would you say to a package of 5-weeks vacation 14 paid holidays full medical and dental company matching retirement fund to 50% of salary and a company car leased every 2 years - say a red Corvette?&quot;The Engineer sat up straight and said &quot;Wow! Are you kidding?&quot;And the interviewer replied &quot;Yeah but you started it.&quot;&#39;],
+       [&#39;Two atoms are walking down the street when one atom says to the other &quot;Oh my! I\&#39;ve lost an electron!&quot;The second atom says&quot;Are you sure&quot;The first replies &quot;I\&#39;m positive!&quot;&#39;],
+       [&#39;Just a thought ..Before criticizing someone walk a mile in their shoes.  Then when you do criticize them you will be a mile away and have their shoes !&#39;],
+       [&#39;Two attorneys went into a diner and ordered two drinks.  Then they produced sandwiches from their briefcases and started to eat.  The owner became quite concerned and marched over and told them &quot;You can\&#39;t eat your own sandwiches in here!&quot;The attorneys looked at each other shrugged their shoulders and then exchanged sandwiches.&#39;],
+       [&#39;A teacher is explaining to her class how different languages use negatives differently.  She says &quot;In all languages a positive followed by a negative or a negative followed by a positive makes a negative.  In some languages two negatives together make a positive while in others they make a negative.  But in no language do two positives make a negative.&quot;  One of the students puts up his hand and says &quot;Yeah right.&quot;&#39;],
+       [&quot;Age and Womanhood1. Between the ages of 13 and 18 ... She is like Africa virgin and unexplored. 2. Between the ages of 19 and 35 ... She is like Asia hot and exotic. 3. Between the ages of 36 and 45 ... She is like America fully explored breathtakingly beautiful and free with her resources.4. Between the ages of 46 and 56 ...She is like Europe exhausted but still has points of interest. 5. After 56 she is like Australia ...Everybody knows it&#39;s down there but who gives a damn?&quot;],
+       [&#39;A bus station is where a bus stops.A train station is where a train stops.On my desk I have a work station...&#39;],
+       [&quot;Q: What&#39;s the difference between greeting a Queen and greeting thePresident of the United  States?A: You only have to get on one knee to greet the queen.&quot;]],
+      dtype=object)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Top 5 Jokes Recommender for users</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">euclidSim</span><span class="p">(</span><span class="n">inA</span><span class="p">,</span><span class="n">inB</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">la</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">inA</span> <span class="o">-</span> <span class="n">inB</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">pearsonSim</span><span class="p">(</span><span class="n">inA</span><span class="p">,</span><span class="n">inB</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inA</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="p">:</span> <span class="k">return</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">0.5</span><span class="o">*</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">inA</span><span class="p">,</span> <span class="n">inB</span><span class="p">,</span> <span class="n">rowvar</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">cosineSim</span><span class="p">(</span><span class="n">inA</span><span class="p">,</span><span class="n">inB</span><span class="p">):</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">inA</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">inB</span><span class="p">)</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">inA</span><span class="p">)</span><span class="o">*</span><span class="n">la</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">inB</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">0.5</span><span class="o">+</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">num</span><span class="o">/</span><span class="n">denom</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">standEst</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">simMeas</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">shape</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">simTotal</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span> <span class="n">ratSimTotal</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">userRating</span> <span class="o">=</span> <span class="n">dataMat</span><span class="p">[</span><span class="n">user</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">userRating</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+            <span class="k">continue</span>
+        <span class="n">overLap</span> <span class="o">=</span> <span class="n">nonzero</span><span class="p">(</span><span class="n">logical_and</span><span class="p">(</span><span class="n">dataMat</span><span class="p">[:,</span><span class="n">item</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">dataMat</span><span class="p">[:,</span><span class="n">j</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">overLap</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> 
+            <span class="n">similarity</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">similarity</span> <span class="o">=</span> <span class="n">simMeas</span><span class="p">(</span><span class="n">dataMat</span><span class="p">[</span><span class="n">overLap</span><span class="p">,</span><span class="n">item</span><span class="p">],</span> <span class="n">dataMat</span><span class="p">[</span><span class="n">overLap</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+        <span class="c1">#print(&#39;the %d and %d similarity is: %f&#39; % (item, j, similarity))</span>
+        <span class="n">simTotal</span> <span class="o">+=</span> <span class="n">similarity</span>
+        <span class="n">ratSimTotal</span> <span class="o">+=</span> <span class="n">similarity</span> <span class="o">*</span> <span class="n">userRating</span>
+    <span class="k">if</span> <span class="n">simTotal</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="n">ratSimTotal</span><span class="o">/</span><span class="n">simTotal</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">svdEst</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">simMeas</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">shape</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">simTotal</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span> <span class="n">ratSimTotal</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">mat</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)</span>
+    <span class="n">U</span><span class="p">,</span><span class="n">Sigma</span><span class="p">,</span><span class="n">VT</span> <span class="o">=</span> <span class="n">la</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">Sig4</span> <span class="o">=</span> <span class="n">mat</span><span class="p">(</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="n">Sigma</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span> <span class="c1">#arrange Sig4 into a diagonal matrix</span>
+    <span class="n">xformedItems</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">U</span><span class="p">[:,:</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">Sig4</span><span class="o">.</span><span class="n">I</span>  <span class="c1">#create transformed items</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">userRating</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">user</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">userRating</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">j</span><span class="o">==</span><span class="n">item</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="n">similarity</span> <span class="o">=</span> <span class="n">simMeas</span><span class="p">(</span><span class="n">xformedItems</span><span class="p">[</span><span class="n">item</span><span class="p">,:]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">xformedItems</span><span class="p">[</span><span class="n">j</span><span class="p">,:]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="c1">#print(&#39;the %d and %d similarity is: %f&#39; % (item, j, similarity))</span>
+        <span class="n">simTotal</span> <span class="o">+=</span> <span class="n">similarity</span>
+        <span class="n">ratSimTotal</span> <span class="o">+=</span> <span class="n">similarity</span> <span class="o">*</span> <span class="n">userRating</span>
+    <span class="k">if</span> <span class="n">simTotal</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span> <span class="k">return</span> <span class="n">ratSimTotal</span><span class="o">/</span><span class="n">simTotal</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">recommend</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">simMeas</span><span class="o">=</span><span class="n">cosineSim</span><span class="p">,</span> <span class="n">estMethod</span><span class="o">=</span><span class="n">standEst</span><span class="p">):</span>
+    <span class="n">unratedItems</span> <span class="o">=</span> <span class="n">nonzero</span><span class="p">(</span><span class="n">dataMat</span><span class="p">[</span><span class="n">user</span><span class="p">,:]</span><span class="o">.</span><span class="n">A</span><span class="o">==</span><span class="mi">0</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#find unrated items </span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unratedItems</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="s1">&#39;you rated everything&#39;</span>
+    <span class="n">itemScores</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">unratedItems</span><span class="p">:</span>
+        <span class="n">estimatedScore</span> <span class="o">=</span> <span class="n">estMethod</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">simMeas</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+        <span class="n">itemScores</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">item</span><span class="p">,</span> <span class="n">estimatedScore</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">itemScores</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">jj</span><span class="p">:</span> <span class="n">jj</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">N</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">data_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">joke_data</span><span class="p">)</span>
+<span class="n">data_matrix</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 3.18, 19.79,  1.34, ...,  0.  ,  0.  ,  0.  ],
+       [15.08, 10.71, 17.36, ..., 11.34,  6.68, 12.07],
+       [ 0.  ,  0.  ,  0.  , ...,  0.  ,  0.  ,  0.  ],
+       ...,
+       [16.58, 16.63, 15.85, ...,  0.  ,  0.  ,  0.  ],
+       [ 3.67,  4.45,  3.67, ...,  3.77,  3.77,  3.28],
+       [ 9.88, 11.73,  9.16, ...,  0.  ,  0.  ,  0.  ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mat</span><span class="p">(</span><span class="n">data_matrix</span><span class="p">)</span>
+<span class="n">data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[28]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>matrix([[ 3.18, 19.79,  1.34, ...,  0.  ,  0.  ,  0.  ],
+        [15.08, 10.71, 17.36, ..., 11.34,  6.68, 12.07],
+        [ 0.  ,  0.  ,  0.  , ...,  0.  ,  0.  ,  0.  ],
+        ...,
+        [16.58, 16.63, 15.85, ...,  0.  ,  0.  ,  0.  ],
+        [ 3.67,  4.45,  3.67, ...,  3.77,  3.77,  3.28],
+        [ 9.88, 11.73,  9.16, ...,  0.  ,  0.  ,  0.  ]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[83]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">user</span> <span class="o">=</span> <span class="mi">26</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">recommend</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">simMeas</span><span class="o">=</span><span class="n">cosineSim</span><span class="p">,</span> <span class="n">estMethod</span><span class="o">=</span><span class="n">standEst</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[(88, 12.327912806674751), (83, 12.324864509292524), (70, 12.324384224173224)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[84]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">user</span> <span class="o">=</span> <span class="mi">712</span>
+<span class="n">rec_user_712</span> <span class="o">=</span> <span class="n">recommend</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">simMeas</span><span class="o">=</span><span class="n">cosineSim</span><span class="p">,</span> <span class="n">estMethod</span><span class="o">=</span><span class="n">standEst</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rec_user_712</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[(70, 10.658811143050135), (62, 10.650343525175092), (83, 10.649506871564698)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[85]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Printing text and predicted ratings for user6</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recommended for you,&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="s2">&quot;you might like this:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rec</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Item &quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">joke_data1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="s2">&quot;with predicted rating: &quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Recommended for you, 712 you might like this:
+
+Item  88 5.42 with predicted rating:  12.327912806674751 
+
+Item  83 4.01 with predicted rating:  12.324864509292524 
+
+Item  70 17.21 with predicted rating:  12.324384224173224 
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[86]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recommended for,&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="s2">&quot;you might like this:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rec_user_712</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Item &quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">joke_data1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="s2">&quot;with predicted rating: &quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Recommended for, 712 you might like this:
+
+Item  70 17.21 with predicted rating:  10.658811143050135 
+
+Item  62 14.11 with predicted rating:  10.650343525175092 
+
+Item  83 4.01 with predicted rating:  10.649506871564698 
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[89]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># For svdEst</span>
+<span class="n">user</span> <span class="o">=</span> <span class="mi">26</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">recommend</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">simMeas</span><span class="o">=</span><span class="n">cosineSim</span><span class="p">,</span> <span class="n">estMethod</span><span class="o">=</span><span class="n">svdEst</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[(71, 12.348743138813983), (70, 12.318380731391715), (88, 12.314754788095462)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[91]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">user</span> <span class="o">=</span> <span class="mi">712</span>
+<span class="n">rec_user_712</span> <span class="o">=</span> <span class="n">recommend</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">simMeas</span><span class="o">=</span><span class="n">cosineSim</span><span class="p">,</span> <span class="n">estMethod</span><span class="o">=</span><span class="n">svdEst</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rec_user_712</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[(64, 10.9037051441138), (87, 10.831066760336125), (88, 10.82507577970776)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[90]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recommended for,&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="s2">&quot;you might like this:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rec</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Item &quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">joke_data1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="s2">&quot;with predicted rating: &quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Recommended for, 26 you might like this:
+
+Item  71 10.9 with predicted rating:  12.348743138813983 
+
+Item  70 17.21 with predicted rating:  12.318380731391715 
+
+Item  88 5.42 with predicted rating:  12.314754788095462 
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[92]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recommended for,&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="s2">&quot;you might like this:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">rec_user_712</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Item &quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">joke_data1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="s2">&quot;with predicted rating: &quot;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Recommended for, 712 you might like this:
+
+Item  64 1.58 with predicted rating:  10.9037051441138 
+
+Item  87 1.34 with predicted rating:  10.831066760336125 
+
+Item  88 5.42 with predicted rating:  10.82507577970776 
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Q-2 B)<a rel="noopener" class="anchor-link" href="#Q-2-B)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[93]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">cross_validate_user</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">test_ratio</span><span class="p">,</span> <span class="n">estMethod</span><span class="o">=</span><span class="n">svdEst</span><span class="p">,</span> <span class="n">simMeas</span><span class="o">=</span><span class="n">pearsonSim</span><span class="p">):</span>
+	<span class="n">dataMat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)</span>
+	<span class="n">number_of_items</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">rated_items_by_user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_items</span><span class="p">)</span> <span class="k">if</span> <span class="n">dataMat</span><span class="p">[</span><span class="n">user</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">test_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">test_ratio</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">rated_items_by_user</span><span class="p">))</span>
+	<span class="n">test_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rated_items_by_user</span><span class="p">),</span> <span class="n">test_size</span><span class="p">)</span>
+	<span class="n">withheld_items</span> <span class="o">=</span> <span class="n">rated_items_by_user</span><span class="p">[</span><span class="n">test_indices</span><span class="p">]</span>
+	<span class="n">original_user_profile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dataMat</span><span class="p">[</span><span class="n">user</span><span class="p">])</span>
+	<span class="n">dataMat</span><span class="p">[</span><span class="n">user</span><span class="p">,</span> <span class="n">withheld_items</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># So that the withheld test items is not used in the rating estimation below</span>
+	<span class="n">error_u</span> <span class="o">=</span> <span class="mf">0.0</span>
+	<span class="n">count_u</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">withheld_items</span><span class="p">)</span>
+
+	<span class="c1"># Compute absolute error for user u over all test items</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">withheld_items</span><span class="p">:</span>
+		<span class="c1"># Estimate rating on the withheld item</span>
+		<span class="n">estimatedScore</span> <span class="o">=</span> <span class="n">estMethod</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">simMeas</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+		<span class="n">error_u</span> <span class="o">=</span> <span class="n">error_u</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">estimatedScore</span> <span class="o">-</span> <span class="n">original_user_profile</span><span class="p">[</span><span class="n">item</span><span class="p">])</span>	
+	
+	<span class="c1"># Now restore ratings of the withheld items to the user profile</span>
+	<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">withheld_items</span><span class="p">:</span>
+		<span class="n">dataMat</span><span class="p">[</span><span class="n">user</span><span class="p">,</span> <span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_user_profile</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+		
+	<span class="c1"># Return sum of absolute errors and the count of test cases for this user</span>
+	<span class="c1"># Note that these will have to be accumulated for each user to compute MAE</span>
+	<span class="k">return</span> <span class="n">error_u</span><span class="p">,</span> <span class="n">count_u</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[98]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">test_ratio</span><span class="p">,</span> <span class="n">estMethod</span><span class="p">,</span> <span class="n">simMeas</span><span class="o">=</span><span class="n">pearsonSim</span><span class="p">):</span>
+    <span class="n">test_err</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">test_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">data_new</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">((</span><span class="n">data_new</span><span class="p">)):</span>
+        <span class="n">ret_1</span><span class="p">,</span> <span class="n">ret_2</span> <span class="o">=</span> <span class="n">cross_validate_user</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">test_ratio</span><span class="p">,</span> <span class="n">estMethod</span><span class="p">)</span>
+        <span class="n">test_err</span> <span class="o">+=</span> <span class="n">ret_1</span>
+        <span class="n">test_count</span> <span class="o">+=</span> <span class="n">ret_2</span>
+
+    <span class="k">return</span> <span class="n">test_err</span> <span class="o">/</span> <span class="n">test_count</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[99]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">test</span><span class="p">(</span><span class="n">data_matrix</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">standEst</span><span class="p">,</span> <span class="n">pearsonSim</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>3.710417343368837
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[101]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">test</span><span class="p">(</span><span class="n">data_matrix</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">svdEst</span><span class="p">,</span> <span class="n">pearsonSim</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>3.6469783686203696
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3>Q-2 C)<a rel="noopener" class="anchor-link" href="#Q-2-C)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[105]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">print_most_similar_jokes</span><span class="p">(</span><span class="n">dataMat</span><span class="p">,</span> <span class="n">jokes</span><span class="p">,</span> <span class="n">queryJoke</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">pearsonSim</span><span class="p">):</span>
+    <span class="n">lst</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">dataMat</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">queryJoke</span><span class="p">:</span>
+            <span class="n">check</span> <span class="o">=</span> <span class="n">metric</span><span class="p">(</span><span class="n">dataMat</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">dataMat</span><span class="p">[</span><span class="n">queryJoke</span><span class="p">])</span>
+            <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">check</span><span class="p">))</span>
+    <span class="n">most_similar_jokes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">jj</span><span class="p">:</span> <span class="n">jj</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">k</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">jokes</span><span class="p">[</span><span class="n">queryJoke</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Top K most_similar_jokes are :</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">most_similar_jokes</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">jokes</span><span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+    <span class="k">return</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[106]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">data_transpose</span> <span class="o">=</span> <span class="n">data_matrix</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[114]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">print_most_similar_jokes</span><span class="p">(</span><span class="n">data_transpose</span><span class="p">,</span> <span class="n">joke_data1</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">pearsonSim</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[&#39;A couple has been married for 75 years. For the husband\&#39;s 95thbirthday his wife decides to surprise him by hiring a prostitute.That day the doorbell rings. The husband uses his walker to get to the door and opens it. A 21-year-old in a latex outfit smiles and says &quot;Hi I here to give you super sex!&quot; The old man says &quot;I\&#39;ll take the soup.&quot;&#39;] 
+
+Top K most_similar_jokes are :
+
+[&quot;Q. What do a hurricane a tornado and a redneck divorce all have in common? A. Someone&#39;s going to lose their trailer...&quot;]
+0.6942043999580452 
+
+[&#39;Two kindergarten girls were talking outside: one said &quot;You won\&#39;t believe what I saw on the patio yesterday--a condom!&quot;The second girl asked &quot;What\&#39;s a patio?&quot;&#39;]
+0.6743171405177172 
+
+[&#39;A guy stood over his tee shot for what seemed an eternity looking up looking down measuring the distance figuring the wind direction and speed. Driving his partner nuts.Finally his exasperated partner says &quot;What the hell is taking so long? Hit the goddamn ball!&quot;The guy answers &quot;My wife is up there watching me from the clubhouse. I want to make this a perfect shot.&quot;&quot;Well hell man you don\&#39;t stand a snowball\&#39;s chance in hell of hitting her from here!&quot; &#39;]
+0.6716205062888227 
+
+[&quot;Bill &amp; Hillary are on a trip back to Arkansas. They&#39;re almost out of gas so Bill pulls into a service station on the outskirts of town. The attendant runs out of the station to serve them when Hillary realizes it&#39;s an old boyfriend from high school. She and the attendant chat as he gases up their car and cleans the windows. Then they all say good-bye. As Bill pulls the car onto the road he turns to Hillary and says &#39;Now aren&#39;t you glad you married me and not him ? You could&#39;ve been the wife of a grease monkey !&#39; To which Hillary replied &#39;No Bill. If I would have married him you&#39;d be pumping gas and he would be the President !&#39; &quot;]
+0.6660061625747318 
+
+[&#39;Q: What do Monica Lewinsky and Bob Dole have in common?A: They were both upset when Bill finished first.&#39;]
+0.6646595126069632 
+
+[&#39;A duck walks into a pharmacy and asks for a condom. The pharmacist says&quot;Would you like me to stick that on your bill?&quot;The duck says: &quot;What kind of duck do you think I am!&quot;&#39;]
+0.6617396222948679 
+
+[&#39;Two cannibals are eating a clown one turns to other and says: &quot;Does this taste funny to you? &#39;]
+0.6611436243908418 
+
+[&#39;A man visits the doctor. The doctor says &quot;I have bad news for you.You have cancer and Alzheimer\&#39;s disease&quot;. The man replies &quot;Well thank God I don\&#39;t have cancer!&quot;&#39;]
+0.65930541199449 
+
+[&#39;What do you call an American in the finals of the world cup?&quot;Hey Beer Man!&quot;&#39;]
+0.6584056412170878 
+
+[&quot;Q: What&#39;s the difference between a Lawyer and a Plumber? A: A Plumber works to unclog the system.&quot;]
+0.6580797407518328 
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&#160;[&#160;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+
+
+ 
+
+
+
+<script type="text/javascript" src="/d2l/common/math/MathML.js?v=20.20.10.24951-324 "></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() { D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML','130'); });</script></body></html>
