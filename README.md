@@ -8,4 +8,4 @@ This book is also suggested by Prof. Mobasher.
 - Bank Application - I have used python and performed correlation analysis and other concepts.
 - K-Nearest-Neighbor (KNN) classification 
 - Classification using scikit-learn
-
+   
